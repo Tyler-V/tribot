@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXCheckBox?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXTabPane?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Text?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="298.0" prefWidth="378.0" styleClass="rounded-pane" stylesheets="@tablets.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scripts.tablets.gui.TabletsFxController">
+   <children>
+      <Pane prefHeight="37.0" prefWidth="378.0" styleClass="rounded-title-pane">
+         <children>
+            <Text fx:id="titleText" layoutY="24.0" styleClass="title" text="USA Tablet Maker" wrappingWidth="381.0000047222711">
+            </Text>
+            <Text fx:id="versionText" layoutX="321.0" layoutY="32.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="version" text="v1.0" textAlignment="RIGHT" wrappingWidth="40.0" />
+         </children>
+      </Pane>
+      <JFXTabPane layoutX="16.0" layoutY="55.0" prefHeight="186.0" prefWidth="347.0">
+         <tabs>
+            <Tab text="General">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="366.0">
+                     <children>
+                        <JFXComboBox fx:id="lecternComboBox" layoutX="14.0" layoutY="20.0" prefHeight="25.0" prefWidth="318.0" promptText="Lectern" />
+                        <JFXComboBox fx:id="tabletComboBox" layoutX="14.0" layoutY="61.0" prefHeight="25.0" prefWidth="318.0" promptText="Tablet" />
+                        <JFXComboBox fx:id="houseComboBox" layoutX="14.0" layoutY="98.0" prefHeight="25.0" prefWidth="150.0" promptText="House" />
+                        <JFXTextField fx:id="friendTextField" layoutX="187.0" layoutY="98.0" prefHeight="25.0" prefWidth="145.0" promptText="Friend's Name" />
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
+            <Tab text="Servant">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <JFXCheckBox fx:id="servantCheckBox" layoutX="15.0" layoutY="15.0" text="Use Servant" />
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
+            <Tab text="Hosting">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <JFXCheckBox fx:id="hostingCheckBox" layoutX="15.0" layoutY="15.0" text="Remain Idle" />
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
+            <Tab text="Antiban">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <JFXCheckBox fx:id="antibanCheckBox" layoutX="15.0" layoutY="15.0" selected="true" text="Use Antiban" />
+                        <JFXCheckBox fx:id="reactionCheckBox" layoutX="15.0" layoutY="44.0" selected="true" text="Sleep Reaction Time" />
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
+         </tabs>
+      </JFXTabPane>
+      <JFXButton fx:id="startButton" buttonType="RAISED" layoutX="90.0" layoutY="251.0" prefHeight="30.0" prefWidth="208.0" text="Start" />
+   </children>
+</Pane>

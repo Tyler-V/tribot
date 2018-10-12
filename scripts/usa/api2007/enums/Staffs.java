@@ -1,0 +1,59 @@
+package scripts.usa.api2007.enums;
+
+import org.apache.commons.lang3.ArrayUtils;
+
+public enum Staffs {
+
+	AIR_STAFF(Runes.AIR_RUNE),
+	WATER_STAFF(Runes.WATER_RUNE),
+	EARTH_STAFF(Runes.EARTH_RUNE),
+	FIRE_STAFF(Runes.FIRE_RUNE),
+
+	AIR_BATTLESTAFF(AIR_STAFF),
+	MYSTIC_AIR_STAFF(AIR_STAFF),
+
+	WATER_BATTLESTAFF(WATER_STAFF),
+	MYSTIC_WATER_STAFF(WATER_STAFF),
+
+	EARTH_BATTLESTAFF(EARTH_STAFF),
+	MYSTIC_EARTH_STAFF(EARTH_STAFF),
+
+	FIRE_BATTLESTAFF(FIRE_STAFF),
+	MYSTIC_FIRE_STAFF(FIRE_STAFF),
+
+	STEAM_BATTLESTAFF(WATER_STAFF, FIRE_STAFF),
+	MYSTIC_STEAM_STAFF(STEAM_BATTLESTAFF),
+
+	MIST_BATTLESTAFF(AIR_STAFF, WATER_STAFF),
+	MYSTIC_MIST_STAFF(MIST_BATTLESTAFF),
+
+	DUST_BATTLESTAFF(AIR_STAFF, EARTH_STAFF),
+	MYSTIC_DUST_STAFF(DUST_BATTLESTAFF),
+
+	SMOKE_BATTLESTAFF(AIR_STAFF, FIRE_STAFF),
+	MYSTIC_SMOKE_STAFF(SMOKE_BATTLESTAFF),
+
+	LAVA_BATTLESTAFF(EARTH_STAFF, FIRE_STAFF),
+	MYSTIC_LAVA_STAFF(LAVA_BATTLESTAFF),
+
+	MUD_BATTLESTAFF(WATER_STAFF, EARTH_STAFF),
+	MYSTIC_MUD_STAFF(MUD_BATTLESTAFF);
+
+	private Runes[] providers;
+
+	Staffs(Runes... providers) {
+		this.providers = providers;
+	}
+
+	Staffs(Staffs staff) {
+		this(staff.getProviders());
+	}
+
+	Staffs(Staffs first, Staffs second) {
+		this(ArrayUtils.addAll(first.getProviders(), second.getProviders()));
+	}
+
+	public Runes[] getProviders() {
+		return this.providers;
+	}
+}

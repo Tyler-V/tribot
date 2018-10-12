@@ -1,0 +1,73 @@
+.root {
+    -fx-font-family: "Roboto Mono";
+}
+
+.rounded-pane {
+    -fx-background-color: #ECEFF1;
+    -fx-border-color: #DDDDDD;
+    -fx-border-radius: 5;
+    -fx-border-insets: 5;
+    -fx-background-insets: 5;
+    -fx-background-radius: 10;
+    -fx-border-style: solid;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(three-pass-box, rgba(100, 100, 100, .5), 10, 0.5, 0, 0);
+}
+
+.rounded-title-pane {
+    -fx-background-color: #192ac4;
+    -fx-background-insets: 5;
+    -fx-background-radius: 5 5 0 0;
+    -fx-pref-height: 50;
+}
+
+.title {
+    -fx-fill: #FFFFFF;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-origin: center;
+    -fx-text-alignment: center;
+}
+
+.version {
+    -fx-fill: #FFFFFF;
+    -fx-font-size: 12px;
+}
+
+.jfx-button {
+    -fx-background-color: #192ac4;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 14px;
+    -fx-padding: 5px;
+    -jfx-button-type: RAISED;
+    -fx-min-width: 100;
+}
+
+.jfx-tab-pane {
+    -fx-background-color: white;
+    -fx-border-color: #DDDDDD;
+    -fx-border-style: solid;
+    -fx-border-width: 1;
+}
+
+.jfx-tab-pane .tab:selected,
+.jfx-tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: #192ac4;
+}
+
+.jfx-tab-pane .tab-label {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: normal;
+}
+
+.jfx-tab-pane .tab-header-area .tab-selected-line {
+    -fx-background-color: #FFFFFF;
+}
+
+.jfx-check-box {
+    -jfx-checked-color: #3700B3;
+}
+
+.input-focused-line {
+    -fx-background-color: #3700B3;
+}
