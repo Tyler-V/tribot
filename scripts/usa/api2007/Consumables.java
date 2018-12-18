@@ -1,6 +1,7 @@
 package scripts.usa.api2007;
 
 import org.tribot.api2007.Inventory;
+import org.tribot.api2007.Skills;
 import org.tribot.api2007.Skills.SKILLS;
 import org.tribot.api2007.types.RSItem;
 
@@ -30,9 +31,9 @@ public class Consumables {
 		Interfaces.closeAll();
 
 		if (Inventory.open()) {
-			final int count = Entities.find(ItemEntity::new).actionsEquals("Eat").getResults().length;
+			final int health = Skills.getCurrentLevel(SKILLS.HITPOINTS);
 			if (item.click())
-				return Condition.wait(() -> count != Entities.find(ItemEntity::new).actionsEquals("Eat").getResults().length);
+				return Condition.wait(3000, () -> (Skills.getCurrentLevel(SKILLS.HITPOINTS) + 1) > health || Skills.getCurrentLevel(SKILLS.HITPOINTS) == Skills.getActualLevel(SKILLS.HITPOINTS));
 		}
 
 		return false;
@@ -45,6 +46,7 @@ public class Consumables {
 	public static boolean drink(SKILLS skill, String... names) {
 		if (skill.getCurrentLevel() > skill.getActualLevel())
 			return false;
+
 		return drink(names);
 	}
 

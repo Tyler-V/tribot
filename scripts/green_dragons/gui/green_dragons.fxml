@@ -11,30 +11,40 @@
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TitledPane?>
-<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="559.0" prefWidth="585.0" styleClass="rounded-pane" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scripts.green_dragons.gui.FxController">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="502.0" prefWidth="546.0" styleClass="rounded-pane" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scripts.green_dragons.gui.FxController">
    <children>
-      <Pane prefHeight="56.0" prefWidth="585.0" styleClass="rounded-title-pane">
+      <Pane prefHeight="56.0" prefWidth="546.0" styleClass="rounded-title-pane">
          <children>
-            <Label layoutX="4.0" layoutY="4.0" prefHeight="42.0" prefWidth="577.0" styleClass="title" text="USA Green Dragons" />
-            <Label fx:id="versionLabel" layoutX="529.0" layoutY="4.0" prefHeight="42.0" prefWidth="35.0" styleClass="version" text="v1.0" />
+            <Label fx:id="titleLabel" layoutX="4.0" layoutY="4.0" prefHeight="42.0" prefWidth="537.0" styleClass="title" text="USA Green Dragons" />
+            <Label fx:id="versionLabel" layoutX="491.0" layoutY="4.0" prefHeight="42.0" prefWidth="35.0" styleClass="version" text="v1.0" />
          </children>
       </Pane>
-      <JFXTabPane layoutX="16.0" layoutY="55.0" prefHeight="438.0" prefWidth="550.0">
+      <JFXTabPane layoutX="10.0" layoutY="50.0" prefHeight="392.0" prefWidth="526.0">
          <tabs>
             <Tab text="General">
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="624.0">
                      <children>
-                        <TitledPane animated="false" collapsible="false" prefHeight="263.0" prefWidth="363.0" snapToPixel="false" text="Settings">
+                        <TitledPane animated="false" collapsible="false" prefHeight="96.0" prefWidth="279.0" snapToPixel="false" text="Green Dragons">
                            <content>
-                              <AnchorPane prefHeight="42.0" prefWidth="218.0">
+                              <AnchorPane prefHeight="42.0" prefWidth="316.0">
                                  <children>
                                     <JFXComboBox fx:id="locationComboBox" prefHeight="25.0" prefWidth="244.0" promptText="Location" />
+                                 </children>
+                              </AnchorPane>
+                           </content>
+                        </TitledPane>
+                        <TitledPane animated="false" collapsible="false" layoutY="96.0" prefHeight="115.0" prefWidth="291.0" snapToPixel="false" text="World Hopping">
+                           <content>
+                              <AnchorPane prefHeight="42.0" prefWidth="316.0">
+                                 <children>
+                                    <Label layoutY="2.0" text="Players in area exceed" />
+                                    <Spinner fx:id="maxPlayersSpinner" layoutX="127.0" prefHeight="25.0" prefWidth="117.0" />
+                                    <JFXCheckBox fx:id="dwarfCannonCheckBox" layoutY="38.0" text="Dwarf cannon" />
                                  </children>
                               </AnchorPane>
                            </content>
@@ -47,23 +57,26 @@
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="551.0">
                      <children>
-                        <TitledPane animated="false" collapsible="false" prefHeight="98.0" prefWidth="275.0" snapToPixel="false" text="Food">
+                        <TitledPane animated="false" collapsible="false" prefHeight="158.0" prefWidth="186.0" snapToPixel="false" text="Food">
                            <content>
                               <AnchorPane prefHeight="42.0" prefWidth="218.0">
                                  <children>
-                                    <JFXTextField fx:id="foodTextField" prefHeight="25.0" prefWidth="150.0" promptText="Name" />
-                                    <Spinner fx:id="foodSpinner" editable="true" layoutX="168.0" layoutY="2.0" prefHeight="25.0" prefWidth="60.0" />
+                                    <JFXTextField fx:id="foodTextField" prefHeight="25.0" prefWidth="135.0" promptText="Name" />
+                                    <Spinner fx:id="foodSpinner" editable="true" layoutX="147.0" layoutY="2.0" prefHeight="25.0" prefWidth="60.0" />
+                                    <JFXSlider fx:id="eatSlider" layoutX="40.0" layoutY="49.0" majorTickUnit="10.0" min="50.0" minorTickCount="5" prefHeight="38.0" prefWidth="167.0" showTickLabels="true" showTickMarks="true" value="75.0" />
+                                    <Label layoutY="48.0" text="Eat %" />
                                  </children>
                               </AnchorPane>
                            </content>
                         </TitledPane>
-                        <TitledPane animated="false" collapsible="false" layoutY="105.0" prefHeight="176.0" prefWidth="275.0" snapToPixel="false" text="Potions">
+                        <TitledPane animated="false" collapsible="false" layoutX="254.0" prefHeight="196.0" prefWidth="255.0" snapToPixel="false" text="Potions">
                            <content>
                               <AnchorPane prefHeight="62.0" prefWidth="285.0">
                                  <children>
-                                    <JFXComboBox fx:id="potion1ComboBox" prefHeight="25.0" prefWidth="228.0" promptText="Potion" />
-                                    <JFXComboBox fx:id="potion2ComboBox" layoutY="40.0" prefHeight="25.0" prefWidth="228.0" promptText="Potion" />
-                                    <JFXComboBox fx:id="potion3ComboBox" layoutY="80.0" prefHeight="25.0" prefWidth="228.0" promptText="Potion" />
+                                    <JFXComboBox fx:id="potion1ComboBox" prefHeight="25.0" prefWidth="208.0" promptText="Potion" />
+                                    <JFXComboBox fx:id="potion2ComboBox" layoutY="40.0" prefHeight="25.0" prefWidth="208.0" promptText="Potion" />
+                                    <JFXComboBox fx:id="potion3ComboBox" layoutY="80.0" prefHeight="25.0" prefWidth="208.0" promptText="Potion" />
+                                    <JFXButton fx:id="potionsResetButton" layoutX="54.0" layoutY="122.0" text="Reset" />
                                  </children>
                               </AnchorPane>
                            </content>
@@ -82,16 +95,8 @@
                                  <children>
                                     <Pane fx:id="equipmentSlots" prefHeight="194.0" prefWidth="148.0">
                                        <children>
-                                          <ImageView fx:id="equipmentSlotsImageView" fitHeight="194.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@images/equipment-slots.png" />
-                                             </image>
-                                          </ImageView>
-                                          <ImageView fx:id="equipmentEmptyImageView" fitHeight="194.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true" visible="false">
-                                             <image>
-                                                <Image url="@images/equipment-empty.png" />
-                                             </image>
-                                          </ImageView>
+                                          <ImageView fx:id="equipmentSlotsImageView" fitHeight="194.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true" />
+                                          <ImageView fx:id="equipmentEmptyImageView" fitHeight="194.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true" visible="false" />
                                        </children>
                                     </Pane>
                                     <Pane fx:id="equipmentItems" prefHeight="194.0" prefWidth="148.0">
@@ -106,7 +111,7 @@
                                           <ImageView fx:id="glovesImageView" fitHeight="32.0" fitWidth="36.0" layoutX="2.0" layoutY="160.0" pickOnBounds="true" preserveRatio="true" />
                                           <ImageView fx:id="shieldImageView" fitHeight="32.0" fitWidth="36.0" layoutX="114.0" layoutY="80.0" pickOnBounds="true" preserveRatio="true" />
                                           <ImageView fx:id="ringImageView" fitHeight="32.0" fitWidth="36.0" layoutX="114.0" layoutY="160.0" pickOnBounds="true" preserveRatio="true" />
-                                          <ImageView fx:id="ammunitionImageView" fitHeight="32.0" fitWidth="36.0" layoutX="99.0" layoutY="41.0" pickOnBounds="true" preserveRatio="true" />
+                                          <ImageView fx:id="arrowImageView" fitHeight="32.0" fitWidth="36.0" layoutX="99.0" layoutY="41.0" pickOnBounds="true" preserveRatio="true" />
                                        </children>
                                     </Pane>
                                     <JFXButton fx:id="refreshEquipmentButton" layoutX="24.0" layoutY="207.0" text="Refresh" />
@@ -114,14 +119,23 @@
                               </AnchorPane>
                            </content>
                         </TitledPane>
-                        <TitledPane animated="false" collapsible="false" layoutX="195.0" prefHeight="154.0" prefWidth="170.0" snapToPixel="false" text="Ranging">
+                        <TitledPane animated="false" collapsible="false" layoutX="195.0" prefHeight="145.0" prefWidth="234.0" snapToPixel="false" text="Special Attack">
+                           <content>
+                              <AnchorPane prefHeight="74.0" prefWidth="165.0">
+                                 <children>
+                                    <JFXCheckBox fx:id="specialAttackCheckBox" prefHeight="18.0" prefWidth="168.0" text="Use Special Attack" />
+                                    <JFXSlider fx:id="specialAttackSlider" blockIncrement="25.0" layoutY="38.0" min="25.0" minorTickCount="5" prefHeight="38.0" prefWidth="187.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="50.0" />
+                                 </children>
+                              </AnchorPane>
+                           </content>
+                        </TitledPane>
+                        <TitledPane animated="false" collapsible="false" layoutX="195.0" layoutY="147.0" prefHeight="141.0" prefWidth="200.0" snapToPixel="false" text="Ammunition">
                            <content>
                               <AnchorPane prefHeight="178.0" prefWidth="183.0">
                                  <children>
-                                    <JFXTextField fx:id="ammunitionTextField" prefHeight="25.0" prefWidth="123.0" promptText="Ammunition Name" />
-                                    <Spinner fx:id="ammunitionSpinner" editable="true" layoutX="53.0" layoutY="45.0" prefHeight="25.0" prefWidth="70.0" />
-                                    <Label layoutY="49.0" text="Amount" />
-                                    <JFXCheckBox fx:id="lootAmmunitionCheckBox" layoutY="85.0" prefHeight="18.0" prefWidth="123.0" text="Loot Ammunition" />
+                                    <JFXTextField fx:id="ammunitionTextField" editable="false" prefHeight="25.0" prefWidth="185.0" promptText="Ammunition Name" />
+                                    <Spinner fx:id="ammunitionPerTripSpinner" editable="true" layoutX="104.0" layoutY="45.0" prefHeight="25.0" prefWidth="83.0" />
+                                    <Label layoutY="47.0" text="Amount Per Trip" />
                                  </children>
                               </AnchorPane>
                            </content>
@@ -134,14 +148,34 @@
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TitledPane animated="false" collapsible="false" prefHeight="163.0" prefWidth="354.0" snapToPixel="false" text="Item Value">
+                        <TitledPane animated="false" collapsible="false" prefHeight="131.0" prefWidth="281.0" snapToPixel="false" text="Loot Value">
                            <content>
                               <AnchorPane prefHeight="129.0" prefWidth="356.0">
                                  <children>
-                                    <Label prefWidth="34.0" text="Above" />
-                                    <JFXSlider fx:id="itemMinValueSlider" blockIncrement="0.0" indicatorPosition="RIGHT" layoutX="63.0" layoutY="-3.0" majorTickUnit="500.0" max="3000.0" minorTickCount="500" prefHeight="38.0" prefWidth="268.0" showTickLabels="true" value="1000.0" />
-                                    <Label layoutY="68.0" text="Below" />
-                                    <Spinner fx:id="itemMinValueSpinner" editable="true" layoutX="61.0" layoutY="64.0" prefHeight="25.0" prefWidth="270.0" />
+                                    <Label layoutY="2.0" prefWidth="34.0" text="Above" />
+                                    <Spinner fx:id="minLootValueSpinner" editable="true" layoutX="60.0" prefHeight="25.0" prefWidth="174.0" />
+                                    <Label layoutY="37.0" text="Below" />
+                                    <Spinner fx:id="maxLootValueSpinner" editable="true" layoutX="60.0" layoutY="35.0" prefHeight="25.0" prefWidth="174.0" />
+                                 </children>
+                              </AnchorPane>
+                           </content>
+                        </TitledPane>
+                        <TitledPane animated="false" collapsible="false" layoutY="131.0" prefHeight="127.0" prefWidth="281.0" snapToPixel="false" text="Maximum Loot Distance">
+                           <content>
+                              <AnchorPane prefHeight="129.0" prefWidth="266.0">
+                                 <children>
+                                    <JFXSlider fx:id="maxLootDistanceSlider" indicatorPosition="RIGHT" majorTickUnit="10.0" max="50.0" minorTickCount="5" prefHeight="14.0" prefWidth="233.0" showTickLabels="true" showTickMarks="true" value="10.0" />
+                                 </children>
+                              </AnchorPane>
+                           </content>
+                        </TitledPane>
+                        <TitledPane animated="false" collapsible="false" layoutX="281.0" prefHeight="131.0" prefWidth="228.0" snapToPixel="false" text="Ranging">
+                           <content>
+                              <AnchorPane prefHeight="178.0" prefWidth="183.0">
+                                 <children>
+                                    <JFXCheckBox fx:id="lootAmmunitionCheckBox" prefHeight="18.0" prefWidth="168.0" text="Loot Ammunition" />
+                                    <Spinner fx:id="lootAmmunitionStackSpinner" editable="true" layoutX="96.0" layoutY="35.0" prefHeight="25.0" prefWidth="85.0" />
+                                    <Label layoutY="39.0" text="Minimum Stack" />
                                  </children>
                               </AnchorPane>
                            </content>
@@ -151,13 +185,23 @@
             </Tab>
             <Tab text="Evading">
               <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="518.0">
                      <children>
-                        <TitledPane animated="false" collapsible="false" prefHeight="260.0" prefWidth="247.0" snapToPixel="false" text="Player Equipment">
+                        <TitledPane animated="false" collapsible="false" prefHeight="338.0" prefWidth="247.0" snapToPixel="false" text="Enemy Equipment">
                            <content>
                               <AnchorPane prefHeight="129.0" prefWidth="356.0">
                                  <children>
-                                    <JFXListView fx:id="equipmentListView" editable="true" prefHeight="199.0" prefWidth="200.0" />
+                                    <JFXListView fx:id="equipmentListView" editable="true" prefHeight="267.0" prefWidth="200.0" />
+                                 </children>
+                              </AnchorPane>
+                           </content>
+                        </TitledPane>
+                        <TitledPane animated="false" collapsible="false" layoutX="247.0" prefHeight="134.0" prefWidth="262.0" snapToPixel="false" text="Evade">
+                           <content>
+                              <AnchorPane prefHeight="80.0" prefWidth="200.0">
+                                 <children>
+                                    <JFXCheckBox fx:id="quickPrayerCheckBox" layoutY="45.0" text="Activate Quick Prayers" />
+                                    <JFXComboBox fx:id="evadeComboBox" prefHeight="25.0" prefWidth="215.0" promptText="Evade when..." />
                                  </children>
                               </AnchorPane>
                            </content>
@@ -168,11 +212,23 @@
             </Tab>
             <Tab text="Antiban">
               <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TitledPane animated="false" collapsible="false" prefHeight="94.0" prefWidth="279.0" snapToPixel="false" text="ABCL">
+                           <content>
+                              <AnchorPane prefHeight="42.0" prefWidth="316.0">
+                                 <children>
+                                    <JFXCheckBox fx:id="antibanCheckbox" selected="true" text="Use Antiban" />
+                                    <JFXCheckBox fx:id="reactionTimingCheckbox" layoutY="32.0" text="Use Reaction Timing" />
+                                 </children>
+                              </AnchorPane>
+                           </content>
+                        </TitledPane>
+                     </children></AnchorPane>
               </content>
             </Tab>
          </tabs>
       </JFXTabPane>
-      <JFXButton fx:id="startButton" buttonType="RAISED" layoutX="193.0" layoutY="507.0" prefHeight="30.0" prefWidth="200.0" text="Start" />
+      <JFXButton fx:id="startButton" buttonType="RAISED" layoutX="173.0" layoutY="453.0" prefHeight="30.0" prefWidth="200.0" text="Start" />
    </children>
 </Pane>

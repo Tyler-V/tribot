@@ -6,10 +6,11 @@ import scripts.crafter.data.Vars;
 import scripts.usa.api.condition.Conditions;
 import scripts.usa.api.condition.ResultCondition;
 import scripts.usa.api.condition.Status;
+import scripts.usa.api.framework.task.PriorityTask;
 import scripts.usa.api.framework.task.Task;
 import scripts.usa.api2007.Keyboard;
 
-public class SelectProduct implements Task {
+public class SelectProduct implements PriorityTask {
 
 	@Override
 	public boolean validate() {

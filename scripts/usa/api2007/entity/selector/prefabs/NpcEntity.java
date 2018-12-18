@@ -300,13 +300,15 @@ public class NpcEntity extends PositionableFinder<RSNPC, NpcEntity> {
 		comparators.add(new Comparator<RSNPC>() {
 			@Override
 			public int compare(RSNPC a, RSNPC b) {
-				if (a.isInteractingWithMe() && b.isInteractingWithMe()) {
-					return 0;
-				}
-				else if (a.isInteractingWithMe()) {
+				boolean interactingA = a.isInteractingWithMe();
+				boolean interactingB = b.isInteractingWithMe();
+				if (interactingA && !interactingB) {
 					return -1;
 				}
-				return 1;
+				else if (!interactingA && interactingB) {
+					return 1;
+				}
+				return Integer.compare((int) a.getHealthPercent(), (int) b.getHealthPercent());
 			}
 		});
 		return this;

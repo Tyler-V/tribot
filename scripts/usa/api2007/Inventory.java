@@ -36,7 +36,9 @@ public class Inventory extends org.tribot.api2007.Inventory {
 
 	public static int getCount(RSItem... items) {
 		int count = 0;
-		List<RSItem> list = Arrays.stream(items).distinct().collect(Collectors.toList());
+		List<RSItem> list = Arrays.stream(items)
+				.distinct()
+				.collect(Collectors.toList());
 		for (RSItem item : list)
 			count += getCount(item);
 		return count;
@@ -48,6 +50,10 @@ public class Inventory extends org.tribot.api2007.Inventory {
 			return 0;
 
 		return getCount(items[0]);
+	}
+
+	public static boolean has(String name) {
+		return Inventory.find(name).length > 0;
 	}
 
 	public static boolean has(Predicate<RSItem> predicate) {

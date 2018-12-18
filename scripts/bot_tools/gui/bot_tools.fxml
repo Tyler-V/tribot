@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXListView?>
+<?import com.jfoenix.controls.JFXTabPane?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+
+
+<StackPane fx:id="stackPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="464.0" prefWidth="600.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scripts.bot_tools.gui.FxController">
+   <children>
+      <Pane prefHeight="494.0" prefWidth="600.0" styleClass="rounded-pane">
+         <children>
+            <Pane prefHeight="262.0" prefWidth="600.0" styleClass="rounded-title-pane">
+               <children>
+                  <Label prefHeight="50.0" prefWidth="600.0" styleClass="title" text="USA Bot Tools" />
+                  <Label fx:id="versionLabel" layoutX="563.0" layoutY="17.0" styleClass="version" text="v1.0" />
+               </children>
+            </Pane>
+            <JFXTabPane layoutX="10.0" layoutY="50.0" prefHeight="353.0" prefWidth="580.0">
+               <tabs>
+                  <Tab text="Grand Exchange">
+                     <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="340.0" prefWidth="548.0">
+                           <children>
+                              <TitledPane animated="false" collapsible="false" prefHeight="224.0" prefWidth="273.0" snapToPixel="false" text="Add Item">
+                                 <content>
+                                    <AnchorPane prefHeight="42.0" prefWidth="225.0">
+                                       <children>
+                                          <JFXComboBox fx:id="offerComboBox" prefHeight="25.0" prefWidth="225.0" promptText="Offer" />
+                                          <JFXTextField fx:id="nameTextField" layoutY="39.0" prefHeight="25.0" prefWidth="225.0" promptText="Name" />
+                                          <Label fx:id="quantityLabel" layoutY="89.0" text="Quantity" />
+                                          <Spinner fx:id="quantitySpinner" layoutX="56.0" layoutY="86.0" prefHeight="25.0" prefWidth="170.0" />
+                                          <Label layoutY="130.0" prefHeight="17.0" prefWidth="50.0" text="Price %" />
+                                          <Slider fx:id="pricePercentageSlider" blockIncrement="0.0" layoutX="57.0" layoutY="130.0" majorTickUnit="5.0" max="20.0" min="-20.0" minorTickCount="1" prefHeight="38.0" prefWidth="169.0" showTickLabels="true" showTickMarks="true" />
+                                          <JFXButton fx:id="addItemButton" layoutX="63.0" layoutY="183.0" styleClass="secondary" text="Add" />
+                                       </children>
+                                    </AnchorPane>
+                                 </content>
+                              </TitledPane>
+                              <JFXTabPane layoutX="275.0" prefHeight="281.0" prefWidth="273.0" styleClass="secondary">
+                                 <tabs>
+                                    <Tab text="Selling">
+                                       <content>
+                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                             <children>
+                                                <JFXButton fx:id="sellingEditButton" layoutY="183.0" styleClass="secondary" text="Edit" />
+                                                <JFXButton fx:id="sellingRemoveButton" layoutX="142.0" layoutY="183.0" styleClass="secondary" text="Remove" />
+                                                <JFXListView fx:id="sellingListView" prefHeight="170.0" prefWidth="242.0" />
+                                             </children>
+                                          </AnchorPane>
+                                       </content>
+                                    </Tab>
+                                    <Tab text="Buying">
+                                       <content>
+                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                             <children>
+                                                <JFXListView fx:id="buyingListView" prefHeight="170.0" prefWidth="242.0" />
+                                                <JFXButton fx:id="buyingEditButton" layoutY="183.0" styleClass="secondary" text="Edit" />
+                                                <JFXButton fx:id="buyingRemoveButton" layoutX="142.0" layoutY="183.0" styleClass="secondary" text="Remove" />
+                                             </children>
+                                          </AnchorPane>
+                                       </content>
+                                    </Tab>
+                                 </tabs>
+                              </JFXTabPane>
+                           </children>
+                        </AnchorPane>
+                     </content>
+                  </Tab>
+               </tabs>
+            </JFXTabPane>
+            <JFXButton fx:id="loadButton" layoutX="27.0" layoutY="415.0" text="Load" />
+            <JFXButton fx:id="startButton" layoutX="226.0" layoutY="415.0" prefHeight="30.0" prefWidth="149.0" text="Start" />
+            <JFXButton fx:id="saveButton" layoutX="473.0" layoutY="415.0" text="Save" />
+         </children>
+      </Pane>
+   </children>
+</StackPane>

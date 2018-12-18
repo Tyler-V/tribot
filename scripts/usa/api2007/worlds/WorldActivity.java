@@ -9,7 +9,8 @@ public enum WorldActivity {
 	HIGH_RISK,
 	SKILL_TOTAL,
 	LMS,
-	ELDER;
+	ELDER,
+	PRIVATE_PRACTICE;
 
 	public static WorldActivity get(String activity) {
 		if (activity.contains("pvp")) {
@@ -35,6 +36,9 @@ public enum WorldActivity {
 		}
 		else if (activity.contains("elder")) {
 			return WorldActivity.ELDER;
+		}
+		else if (activity.contains("private")) {
+			return WorldActivity.PRIVATE_PRACTICE;
 		}
 		return null;
 	}

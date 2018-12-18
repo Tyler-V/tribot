@@ -14,7 +14,6 @@ import javax.swing.SwingUtilities;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.tribot.api.General;
 import org.tribot.util.Util;
 
 import javafx.application.Application;
@@ -51,17 +50,32 @@ public class FxApplication extends Application {
 	}
 
 	private boolean isLocal() {
-		return ScriptVars.get().getTaskScript().getRepoID() == -1;
+		return ScriptVars.get()
+				.getTaskScript()
+				.getRepoID() == -1;
 	}
 
 	private String getScriptPackage() {
-		String[] split = fxGUI.getClass().getName().split("\\.");
-		StringJoiner joiner = new StringJoiner("/");
-		return joiner.add(split[0]).add(split[1]).toString();
+		String[] split = fxGUI.getClass()
+				.getName()
+				.split("\\.");
+		StringJoiner joiner = new StringJoiner(File.separator);
+		String scriptPackage = FilenameUtils.separatorsToSystem(joiner.add(split[0])
+				.add(split[1])
+				.toString());
+		System.out.println("Script Package: " + scriptPackage);
+		return scriptPackage;
 	}
 
 	private String getPackageDirectory(String packagePath) {
-		return FilenameUtils.separatorsToSystem(Util.getWorkingDirectory().getAbsolutePath() + "/src/" + packagePath);
+		StringJoiner joiner = new StringJoiner(File.separator);
+		String packageDirectory = FilenameUtils.separatorsToSystem(joiner.add(Util.getWorkingDirectory()
+				.getAbsolutePath())
+				.add("src")
+				.add(packagePath)
+				.toString());
+		System.out.println("Package Directory: " + packageDirectory);
+		return packageDirectory;
 	}
 
 	private String getFXMLFile(String directory) {
@@ -70,7 +84,12 @@ public class FxApplication extends Application {
 
 	private Path getFileNameWithExtension(String directory, String extension) {
 		try {
-			return Files.walk(Paths.get(directory)).filter(file -> file.toString().endsWith(extension)).findFirst().get().getFileName();
+			return Files.walk(Paths.get(directory))
+					.filter(file -> file.toString()
+							.endsWith(extension))
+					.findFirst()
+					.get()
+					.getFileName();
 		}
 		catch (IOException e) {
 			e.printStackTrace();
@@ -79,7 +98,15 @@ public class FxApplication extends Application {
 	}
 
 	private String getScriptDirectory() {
-		return FilenameUtils.separatorsToSystem(Util.getWorkingDirectory().getAbsolutePath() + "/" + ScriptVars.get().getScriptManifest().name());
+		StringJoiner joiner = new StringJoiner(File.separator);
+		String scriptDirectory = FilenameUtils.separatorsToSystem(joiner.add(Util.getWorkingDirectory()
+				.getAbsolutePath())
+				.add(ScriptVars.get()
+						.getScriptManifest()
+						.name())
+				.toString());
+		System.out.println("Script Directory: " + scriptDirectory);
+		return scriptDirectory;
 	}
 
 	private void start() {
@@ -103,7 +130,8 @@ public class FxApplication extends Application {
 
 		if (isLocal()) {
 			System.out.println("Loading fxml file...");
-			URL fxml = fxGUI.getClass().getResource(getFXMLFile(getPackageDirectory(getScriptPackage())));
+			URL fxml = fxGUI.getClass()
+					.getResource(getFXMLFile(getPackageDirectory(getScriptPackage())));
 			if (fxml == null) {
 				System.out.println("No .fxml found!");
 				return;
@@ -122,18 +150,21 @@ public class FxApplication extends Application {
 			loader = new FXMLLoader();
 			loader.setClassLoader(getClass().getClassLoader());
 			loader.setController(controller);
-			parent = loader.load(new ByteArrayInputStream(fxGUI.getFXML().getBytes()));
+			parent = loader.load(new ByteArrayInputStream(fxGUI.getFXML()
+					.getBytes()));
 			scene = new Scene(parent);
 
 			if (fxGUI.stylesheet() == null) {
 				System.out.println("No stylesheet string found!");
 			}
 			else {
-				File file = new File(getScriptDirectory() + "/stylesheet.css");
+				File file = new File(getScriptDirectory() + File.separator + "stylesheet.css");
 				System.out.println("Loading stylesheet from " + file.getPath());
 				FileUtils.writeStringToFile(file, fxGUI.stylesheet(), Charset.forName("UTF-8"));
 				Condition.wait(() -> file.exists());
-				scene.getStylesheets().add(file.toURI().toString());
+				scene.getStylesheets()
+						.add(file.toURI()
+								.toString());
 				file.deleteOnExit();
 			}
 		}
@@ -169,8 +200,10 @@ public class FxApplication extends Application {
 		scene.setOnMouseDragged(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				scene.getWindow().setX(event.getScreenX() - sceneX);
-				scene.getWindow().setY(event.getScreenY() - sceneY);
+				scene.getWindow()
+						.setX(event.getScreenX() - sceneX);
+				scene.getWindow()
+						.setY(event.getScreenY() - sceneY);
 			}
 		});
 	}
@@ -204,7 +237,8 @@ public class FxApplication extends Application {
 
 	public void centerWindow() {
 		if (isShowing()) {
-			Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
+			Rectangle2D bounds = Screen.getPrimary()
+					.getVisualBounds();
 			stage.setX((bounds.getWidth() - stage.getWidth()) / 2);
 			stage.setY((bounds.getHeight() - stage.getHeight()) / 2);
 		}

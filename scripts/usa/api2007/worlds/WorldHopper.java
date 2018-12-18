@@ -7,45 +7,50 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import org.tribot.api.General;
-import org.tribot.api.Timing;
-import org.tribot.api.input.Keyboard;
 import org.tribot.api.input.Mouse;
-import org.tribot.api.types.generic.Condition;
 import org.tribot.api2007.Game;
 import org.tribot.api2007.GameTab;
 import org.tribot.api2007.GameTab.TABS;
 import org.tribot.api2007.Inventory;
 import org.tribot.api2007.Login;
-import org.tribot.api2007.NPCChat;
+import org.tribot.api2007.Login.STATE;
 import org.tribot.api2007.Player;
 import org.tribot.api2007.Screen;
+import org.tribot.api2007.types.RSInterface;
 import org.tribot.api2007.types.RSInterfaceChild;
 import org.tribot.api2007.types.RSInterfaceComponent;
+import org.tribot.api2007.types.RSItem;
 
+import scripts.usa.api.condition.Condition;
+import scripts.usa.api.condition.Status;
 import scripts.usa.api2007.Interfaces;
+import scripts.usa.api2007.NPCChat;
+import scripts.usa.api2007.entity.selector.Entities;
+import scripts.usa.api2007.entity.selector.prefabs.InterfaceEntity;
 
 public class WorldHopper {
 
+	public static List<World> worlds;
+
 	private final static int WORLD_SWITCHER_MASTER = 69;
-	private final static int WORLD_SWITCHER_CLOSE_BUTTON = 3;
-	private final static int WORLD_SWITCHER_CONTAINER = 4;
-	private final static int WORLD_SWITCHER_SCROLL_BAR = 15;
-	private final static int WORLD_SWITCHER_UP_ARROW = 4;
-	private final static int WORLD_SWITCHER_DOWN_ARROW = 5;
-	private final static int WORLD_SWITCHER_WORLDS = 7;
-	private final static int WORLD_SWITCHER_LOGOUT_BUTTON = 19;
+	private final static int WORLD_SWITCHER_WORLDS_PANE = 8;
+	private final static int WORLD_SWITCHER_WORLDS = 15;
+
+	private final static int WORLD_SWITCHER_SCROLLBAR = 16;
+	private final static int WORLD_SWITCHER_SCROLLBAR_PANE = 0;
+	private final static int WORLD_SWITCHER_SCROLLBAR_UP_ARROW = 4;
+	private final static int WORLD_SWITCHER_SCROLLBAR_DOWN_ARROW = 5;
 
 	private final static int WORLD_SWITCHER_WARNING_DIALOG = 219;
 	private final static int WORLD_SWITCHER_WARNING_DIALOG_CONFIRM = 2;
 
 	private final static int LOGOUT_MENU_MASTER = 182;
-	private final static int LOGOUT_MENU_WORLD_SWITCHER_BUTTON = 3;
-	private final static int LOGOUT_MENU_LOGOUT_BUTTON = 12;
 
 	private final static Rectangle CLICK_TO_SWITCH = new Rectangle(10, 468, 90, 20);
 	private final static Point WORLD_SELECTOR_TOP_RIGHT = new Point(762, 23);
@@ -54,20 +59,14 @@ public class WorldHopper {
 	private final static int WORLD_PADDING = 4;
 	private final static int SCREEN_HEIGHT = 502;
 
-	public static List<World> worlds;
-
 	// UPDATE
 	private final static Point COLUMN_1_WORLD = new Point(189, 46); // 46y / 58y
 	private final static int VERTICAL_DISTANCE = 24;
 	private final static int HORIZONTAL_DISTANCE = 93;
-	private final static int[] COLUMN_1_WORLDS = new int[] { 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318,
-			319, 320 };
-	private final static int[] COLUMN_2_WORLDS = new int[] { 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338,
-			339, 340 };
-	private final static int[] COLUMN_3_WORLDS = new int[] { 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358,
-			359, 360 };
-	private final static int[] COLUMN_4_WORLDS = new int[] { 361, 362, 365, 366, 367, 368, 369, 370, 373, 374, 375, 376, 377, 378, 381, 382, 383, 384,
-			385, 386 };
+	private final static int[] COLUMN_1_WORLDS = new int[] { 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320 };
+	private final static int[] COLUMN_2_WORLDS = new int[] { 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340 };
+	private final static int[] COLUMN_3_WORLDS = new int[] { 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360 };
+	private final static int[] COLUMN_4_WORLDS = new int[] { 361, 362, 365, 366, 367, 368, 369, 370, 373, 374, 375, 376, 377, 378, 381, 382, 383, 384, 385, 386 };
 	private final static int[] COLUMN_5_WORLDS = new int[] { 387, 388, 389, 390, 391, 392, 393, 394, 403, 404, 405, 406, 407, 408, 410, 411, 412 };
 
 	static {
@@ -98,7 +97,8 @@ public class WorldHopper {
 	 */
 	public static List<World> getWorlds() throws IOException {
 		List<World> list = new ArrayList<World>();
-		try (DataInputStream dis = new DataInputStream(new URL("http://oldschool.runescape.com/slr").openConnection().getInputStream())) {
+		try (DataInputStream dis = new DataInputStream(new URL("http://oldschool.runescape.com/slr").openConnection()
+				.getInputStream())) {
 			@SuppressWarnings("unused")
 			int size = dis.readInt() & 0xFF;
 			int count = dis.readShort();
@@ -163,7 +163,7 @@ public class WorldHopper {
 	 * Formats the world to a 3-digit format
 	 * 
 	 * @param world
-	 *            , i.e. (1 -> 301, 334 -> 334)
+	 *                  , i.e. (1 -> 301, 334 -> 334)
 	 * @return world in a 3-digit format
 	 */
 	private static int formatWorld(int world) {
@@ -175,52 +175,42 @@ public class WorldHopper {
 	}
 
 	/**
-	 * Changes to the desired world using the in-game world switcher or logout
-	 * menu depending on the game state
+	 * Changes to the desired world using the in-game world switcher or logout menu
+	 * depending on the game state
 	 * 
 	 * @param world
 	 * @param timeout
-	 *            : duration the bot should click to the world
+	 *                    : duration the bot should click to the world
 	 * @return true if we successfully changed worlds
 	 */
 	public static boolean changeWorld(int world) {
-		int w = formatWorld(world);
+		world = formatWorld(world);
 		if (Login.getLoginState() == Login.STATE.INGAME) {
-			Interfaces.closeAll();
 			if (getCurrentWorld() == world) {
 				System.out.println("WorldHopper: Already on world " + world + ".");
 				return true;
 			}
-			if (Player.getRSPlayer().isInCombat()) {
+			if (Player.getRSPlayer()
+					.isInCombat()) {
 				System.out.println("WorldHopper: Unable to change worlds while in combat.");
 				return false;
 			}
+			System.out.println("WorldHopper: Opening world switcher.");
+			if (!isWorldSwitcherOpen())
+				Interfaces.closeAll();
 			if (openWorldSwitcher()) {
-				System.out.println("WorldHopper: Opening world switcher.");
-				if (Math.random() < 0) {
-					System.out.println("WorldHopper: Clicking to world " + w);
-					if (clickToWorld(w)) {
-						System.out.println("WorldHopper: Selecting world " + w);
-						if (selectWorld(w)) {
-							System.out.println("WorldHopper: Changed to world " + w);
-							return true;
-						}
-					}
-				}
-				else {
-					System.out.println("WorldHopper: Scrolling to world " + w);
-					if (scrollToWorld(w)) {
-						System.out.println("WorldHopper: Selecting world " + w);
-						if (selectWorld(w)) {
-							System.out.println("WorldHopper: Changed to world " + w);
-							return true;
-						}
+				System.out.println("WorldHopper: Navigating to world " + world);
+				if (navigateToWorld(world)) {
+					System.out.println("WorldHopper: Selecting world " + world);
+					if (selectWorld(world)) {
+						System.out.println("WorldHopper: Changed to world " + world);
+						return true;
 					}
 				}
 			}
 		}
 		else {
-			if (selectWorld(w)) {
+			if (selectWorld(world)) {
 				if (Login.login())
 					return true;
 			}
@@ -228,302 +218,354 @@ public class WorldHopper {
 		return false;
 	}
 
-	public static boolean inGameWorldSwitcherLoading() {
-		if (isWorldSwitcherOpen())
-			return false;
-		RSInterfaceChild child = Interfaces.get(69, 2);
-		if (child == null)
-			return false;
-		String text = child.getText();
-		if (text == null)
-			return false;
-		return text.contains("Loading");
-	}
-
 	/**
-	 * Will scroll to the desired world if the world switcher menu is open using
-	 * the mouse scroll wheel.
+	 * Will click to the desired world or scroll depending on the distance of world
+	 * in the pane.
 	 * 
 	 * @param world
-	 *            : Desired world, any format.
+	 *                    : Desired world, any format.
 	 * @param timeout
-	 *            : Total timeout duration for the clicking of the up/down
-	 *            arrows
+	 *                    : Total timeout duration for the clicking of the up/down
+	 *                    arrows
 	 * @return : true if the world is in view
 	 */
-	public static boolean scrollToWorld(int world) {
-		world = formatWorld(world) - 300;
+	public static boolean navigateToWorld(final int world) {
 		if (!isWorldSwitcherOpen())
 			return false;
-		RSInterfaceChild child = Interfaces.get(WORLD_SWITCHER_MASTER, WORLD_SWITCHER_CONTAINER);
-		if (child == null)
-			return false;
-		final Rectangle WORLD_SWITCHER_MENU = child.getAbsoluteBounds();
-		if (WORLD_SWITCHER_MENU == null)
-			return false;
-		Rectangle bounds = getBounds(world);
-		if (bounds == null)
-			return false;
-		if (rectangleIsVisible(bounds))
+
+		if (isWorldVisible(world))
 			return true;
-		final int WORLD_SWITCHER_TOP_HEIGHT = getWorldSwitcherMenuHeight(true);
-		final int WORLD_SWITCHER_BOTTOM_HEIGHT = getWorldSwitcherMenuHeight(false);
-		if (WORLD_SWITCHER_TOP_HEIGHT == 0 || WORLD_SWITCHER_BOTTOM_HEIGHT == 0)
-			return false;
-		boolean half_ticks = false;
-		boolean up = false;
-		int ticks = 0;
-		long timer = System.currentTimeMillis() + 10000;
-		while (timer > System.currentTimeMillis()) {
-			if (Player.getRSPlayer().isInCombat())
-				return false;
-			if (!WORLD_SWITCHER_MENU.contains(Mouse.getPos())) {
-				Mouse.moveBox(WORLD_SWITCHER_MENU);
-				General.sleep(General.randomSD(0, 500, 75, 25));
-			}
-			if (ticks == 0)
-				ticks = getTicks();
-			bounds = getBounds(world);
-			if (bounds == null)
-				return false;
-			if (rectangleIsVisible(bounds))
-				return true;
-			if (bounds.y < WORLD_SWITCHER_TOP_HEIGHT) {
-				Mouse.scroll(true, ticks);
-				up = true;
-			}
-			else if ((bounds.y + bounds.height) > WORLD_SWITCHER_BOTTOM_HEIGHT) {
-				Mouse.scroll(false, ticks);
-				up = false;
-			}
-			bounds = getBounds(world);
-			if (bounds == null)
-				return false;
-			if (up && (bounds.y + bounds.height) > WORLD_SWITCHER_BOTTOM_HEIGHT) {
-				half_ticks = true;
-			}
-			else if (!up && bounds.y < WORLD_SWITCHER_TOP_HEIGHT) {
-				half_ticks = true;
-			}
-			if (half_ticks)
-				ticks = (int) Math.ceil(ticks / 2.0D);
-			General.sleep(getDelay());
-		}
-		return rectangleIsVisible(getBounds(world));
-	}
 
-	/**
-	 * CHARACTER PROFILE
-	 * 
-	 * @return
-	 */
-	private static int getTicks() {
-		return General.random(1, 5);
-	}
+		int distanceToPane = getWorldDistanceToPane(world);
 
-	/**
-	 * CHARACTER PROFILE
-	 * 
-	 * @return
-	 */
-	private static int getDelay() {
-		return General.randomSD(0, 200, 50, 25);
-	}
+		if (distanceToPane > General.random(50, 150)) {
+			RSInterfaceChild scrollbar = Interfaces.get(WORLD_SWITCHER_MASTER, WORLD_SWITCHER_SCROLLBAR);
+			if (scrollbar == null)
+				return false;
 
-	/**
-	 * Will scroll to the desired world if the world switcher menu is open. If
-	 * the distance of the bounds of the desired world are over (200, 250) it
-	 * will click the scroll pane first then navigate by the up and down arrows.
-	 * 
-	 * @param world
-	 *            : Desired world, any format.
-	 * @param timeout
-	 *            : Total timeout duration for the clicking of the up/down
-	 *            arrows
-	 * @return : true if the world is in view
-	 */
-	public static boolean clickToWorld(int world) {
-		world = formatWorld(world) - 300;
-		if (!isWorldSwitcherOpen())
-			return false;
-		Rectangle bounds = null;
-		long timer;
-		timer = System.currentTimeMillis() + 3000;
-		while (timer > System.currentTimeMillis()) {
-			bounds = getBounds(world);
-			if (bounds != null)
-				break;
-			General.sleep(100);
-		}
-		if (bounds == null)
-			return false;
-		if (rectangleIsVisible(bounds))
-			return true;
-		int distance = getBoundsDistanceToScreen(bounds);
-		if (Math.abs(distance) > General.random(200, 250)) {
-			RSInterfaceChild child = Interfaces.get(WORLD_SWITCHER_MASTER, WORLD_SWITCHER_SCROLL_BAR);
-			if (child == null || child.isHidden())
+			RSInterfaceComponent scrollbarPane = scrollbar.getChild(WORLD_SWITCHER_SCROLLBAR_PANE);
+			if (scrollbarPane == null)
 				return false;
-			RSInterfaceComponent component = null;
-			component = child.getChild(0);
-			if (component == null || component.isHidden())
+
+			Rectangle scrollbarPaneBounds = scrollbarPane.getAbsoluteBounds();
+			if (scrollbarPaneBounds == null)
 				return false;
-			Rectangle scrollBarPane = component.getAbsoluteBounds();
-			if (scrollBarPane == null)
-				return false;
-			component = child.getChild(1);
-			if (component == null || component.isHidden())
-				return false;
-			Rectangle scrollBar = component.getAbsoluteBounds();
-			if (scrollBar == null)
-				return false;
-			double MAX_DISTANCE = 927;
-			double SCROLL_BAR_PANE_HEIGHT = scrollBarPane.getHeight();
-			double SCROLL_BAR_Y = scrollBar.getY();
-			double RATIO = SCROLL_BAR_PANE_HEIGHT / MAX_DISTANCE;
-			double TRAVEL_DISTANCE = distance * RATIO;
-			int x = scrollBar.x + General.random(4, scrollBar.width - 4);
-			int y = (int) (SCROLL_BAR_Y + TRAVEL_DISTANCE);
-			if (distance < 0)
-				y += scrollBar.height;
-			if (y == 245)
-				y += General.random(2, 15);
-			if (y == 417)
-				y -= General.random(2, 15);
+
+			double paneHeight = getScrollbarPaneHeight();
+			double relativePosition = getRelativePosition(world);
+			double ratio = relativePosition / paneHeight;
+			double scrollbarPosition = ratio * scrollbarPaneBounds.getHeight();
+
+			int x = scrollbarPaneBounds.x + General.random(5, scrollbarPaneBounds.width - 5);
+			int y = scrollbarPaneBounds.y + Math.max(1, Math.min(scrollbarPane.getHeight() - 1, (int) scrollbarPosition));
+
 			Mouse.click(new Point(x, y), 1);
-			General.sleep(General.randomSD(0, 500, 75, 25));
+			if (isWorldVisible(world))
+				return true;
 		}
-		if (rectangleIsVisible(getBounds(world)))
-			return true;
-		final int WORLD_SWITCHER_TOP_HEIGHT = getWorldSwitcherMenuHeight(true);
-		final int WORLD_SWITCHER_BOTTOM_HEIGHT = getWorldSwitcherMenuHeight(false);
-		if (WORLD_SWITCHER_TOP_HEIGHT == 0 || WORLD_SWITCHER_BOTTOM_HEIGHT == 0)
+
+		RSInterfaceChild worldSwitcherPane = Interfaces.get(WORLD_SWITCHER_MASTER, WORLD_SWITCHER_WORLDS_PANE);
+		if (worldSwitcherPane == null)
 			return false;
-		if (bounds.y < WORLD_SWITCHER_TOP_HEIGHT) {
-			RSInterfaceChild child = Interfaces.get(WORLD_SWITCHER_MASTER, WORLD_SWITCHER_SCROLL_BAR);
-			if (child == null)
-				return false;
-			RSInterfaceComponent up = child.getChild(WORLD_SWITCHER_UP_ARROW);
-			if (up == null)
-				return false;
-			timer = System.currentTimeMillis() + 10000;
-			while (timer > System.currentTimeMillis()) {
-				if (Player.getRSPlayer().isInCombat())
-					return false;
-				up.click();
-				if (rectangleIsVisible(getBounds(world)))
-					return true;
-				General.sleep(getDelay());
+
+		final Rectangle worldSwitcherPaneBounds = worldSwitcherPane.getAbsoluteBounds();
+		if (worldSwitcherPaneBounds == null)
+			return false;
+
+		Condition.wait(() -> {
+			if (!worldSwitcherPaneBounds.contains(Mouse.getPos())) {
+				Mouse.moveBox(worldSwitcherPaneBounds);
+				Condition.wait(() -> worldSwitcherPaneBounds.contains(Mouse.getPos()));
 			}
-		}
-		else {
-			RSInterfaceChild child = Interfaces.get(WORLD_SWITCHER_MASTER, WORLD_SWITCHER_SCROLL_BAR);
-			if (child == null)
+
+			if (Player.getRSPlayer()
+					.isInCombat())
 				return false;
-			RSInterfaceComponent down = child.getChild(WORLD_SWITCHER_DOWN_ARROW);
-			if (down == null)
-				return false;
-			timer = System.currentTimeMillis() + 10000;
-			while (timer > System.currentTimeMillis()) {
-				if (Player.getRSPlayer().isInCombat())
-					return false;
-				down.click();
-				if (rectangleIsVisible(getBounds(world)))
-					return true;
-				General.sleep(getDelay());
+
+			if (isWorldVisible(world))
+				return true;
+
+			Direction direction = getWorldDirectionInPane(world);
+			int ticks = getTicks(world);
+
+			if (direction == Direction.UP) {
+				Mouse.scroll(true, ticks);
 			}
-		}
-		return rectangleIsVisible(getBounds(world));
+			else {
+				Mouse.scroll(false, ticks);
+			}
+
+			General.sleep(getDelay());
+			return false;
+		});
+
+		return isWorldVisible(world);
 	}
 
 	/**
-	 * @param top
-	 *            or bottom of the menu's height
-	 * @return
+	 * Will scroll to the desired world if the world switcher menu is open using the
+	 * mouse scroll wheel.
+	 * 
+	 * @param world
+	 *                    : Desired world, any format.
+	 * @param timeout
+	 *                    : Total timeout duration for the clicking of the up/down
+	 *                    arrows
+	 * @return : true if the world is in view
 	 */
-	private static int getWorldSwitcherMenuHeight(boolean top) {
-		RSInterfaceChild child = Interfaces.get(WORLD_SWITCHER_MASTER, WORLD_SWITCHER_CONTAINER);
+	public static boolean scrollToWorld(final int world) {
+		if (!isWorldSwitcherOpen())
+			return false;
+
+		if (isWorldVisible(world))
+			return true;
+
+		RSInterfaceChild worldSwitcherPane = Interfaces.get(WORLD_SWITCHER_MASTER, WORLD_SWITCHER_WORLDS_PANE);
+		if (worldSwitcherPane == null)
+			return false;
+
+		final Rectangle worldSwitcherPaneBounds = worldSwitcherPane.getAbsoluteBounds();
+		if (worldSwitcherPaneBounds == null)
+			return false;
+
+		Condition.wait(() -> {
+			if (!worldSwitcherPaneBounds.contains(Mouse.getPos())) {
+				Mouse.moveBox(worldSwitcherPaneBounds);
+				Condition.wait(() -> worldSwitcherPaneBounds.contains(Mouse.getPos()));
+			}
+
+			if (Player.getRSPlayer()
+					.isInCombat())
+				return false;
+
+			if (isWorldVisible(world))
+				return true;
+
+			Direction direction = getWorldDirectionInPane(world);
+			int ticks = getTicks(world);
+
+			if (direction == Direction.UP) {
+				Mouse.scroll(true, ticks);
+			}
+			else {
+				Mouse.scroll(false, ticks);
+			}
+
+			General.sleep(getDelay());
+			return false;
+		});
+
+		return isWorldVisible(world);
+	}
+
+	/**
+	 * Will scroll to the desired world if the world switcher menu is open. If the
+	 * distance of the bounds of the desired world are over (200, 250) it will click
+	 * the scroll pane first then navigate by the up and down arrows.
+	 * 
+	 * @param world
+	 *                    : Desired world, any format.
+	 * @param timeout
+	 *                    : Total timeout duration for the clicking of the up/down
+	 *                    arrows
+	 * @return : true if the world is in view
+	 */
+	public static boolean clickToWorld(final int world) {
+		if (!isWorldSwitcherOpen())
+			return false;
+
+		if (isWorldVisible(world))
+			return true;
+
+		int distanceToPane = getWorldDistanceToPane(world);
+
+		if (distanceToPane > General.random(0, 50)) {
+			RSInterfaceChild scrollbar = Interfaces.get(WORLD_SWITCHER_MASTER, WORLD_SWITCHER_SCROLLBAR);
+			if (scrollbar == null)
+				return false;
+
+			RSInterfaceComponent scrollbarPane = scrollbar.getChild(WORLD_SWITCHER_SCROLLBAR_PANE);
+			if (scrollbarPane == null)
+				return false;
+
+			Rectangle scrollbarPaneBounds = scrollbarPane.getAbsoluteBounds();
+			if (scrollbarPaneBounds == null)
+				return false;
+
+			double paneHeight = getScrollbarPaneHeight();
+			double relativePosition = getRelativePosition(world);
+			double ratio = relativePosition / paneHeight;
+			double scrollbarPosition = ratio * scrollbarPaneBounds.getHeight();
+
+			int x = scrollbarPaneBounds.x + General.random(5, scrollbarPaneBounds.width - 5);
+			int y = scrollbarPaneBounds.y + Math.max(1, Math.min(scrollbarPane.getHeight() - 1, (int) scrollbarPosition));
+
+			Mouse.click(new Point(x, y), 1);
+		}
+
+		if (isWorldVisible(world))
+			return true;
+
+		RSInterface button;
+		Direction direction = getWorldDirectionInPane(world);
+
+		if (direction == Direction.UP) {
+			RSInterfaceChild child = Interfaces.get(WORLD_SWITCHER_MASTER, WORLD_SWITCHER_SCROLLBAR);
+			if (child == null)
+				return false;
+			button = child.getChild(WORLD_SWITCHER_SCROLLBAR_UP_ARROW);
+		}
+		else {
+			RSInterfaceChild child = Interfaces.get(WORLD_SWITCHER_MASTER, WORLD_SWITCHER_SCROLLBAR);
+			if (child == null)
+				return false;
+			button = child.getChild(WORLD_SWITCHER_SCROLLBAR_DOWN_ARROW);
+		}
+
+		if (button == null)
+			return false;
+
+		Condition.wait(() -> {
+			if (Player.getRSPlayer()
+					.isInCombat())
+				return false;
+
+			if (isWorldVisible(world))
+				return true;
+
+			if (button.click())
+				General.sleep(getDelay());
+
+			return false;
+		});
+
+		return isWorldVisible(world);
+	}
+
+	private static int getTicks(final int world) {
+		int distanceToPane = getWorldDistanceToPane(world);
+		return Math.max(General.random(1, 3), distanceToPane / General.random(50, 100));
+	}
+
+	private static int getDelay() {
+		return General.randomSD(100, 50);
+	}
+
+	private enum Direction {
+		UP,
+		DOWN;
+	}
+
+	private static Direction getWorldDirectionInPane(final int world) {
+		Rectangle worldSwitcherPaneBounds = getWorldSwitcherPaneBounds();
+		if (worldSwitcherPaneBounds == null)
+			return null;
+
+		Rectangle worldBounds = getAbsoluteBounds(world);
+		if (worldBounds == null)
+			return null;
+
+		return worldBounds.y < worldSwitcherPaneBounds.y ? Direction.UP : Direction.DOWN;
+	}
+
+	private static int getWorldDistanceToPane(final int world) {
+		RSInterfaceChild worldSwitcherPane = Interfaces.get(WORLD_SWITCHER_MASTER, WORLD_SWITCHER_WORLDS_PANE);
+		if (worldSwitcherPane == null)
+			return 0;
+
+		Rectangle worldSwitcherPaneBounds = worldSwitcherPane.getAbsoluteBounds();
+		if (worldSwitcherPaneBounds == null)
+			return 0;
+
+		int scrollPosition = worldSwitcherPane.getScrollY();
+
+		Rectangle worldBounds = getAbsoluteBounds(world);
+		if (worldBounds == null)
+			return 0;
+
+		int worldRelativePosition = getRelativePosition(world);
+
+		return Math.abs((scrollPosition + worldSwitcherPaneBounds.height - worldBounds.height) - worldRelativePosition);
+	}
+
+	private static int getScrollbarPaneHeight() {
+		RSInterfaceChild child = Interfaces.get(WORLD_SWITCHER_MASTER, WORLD_SWITCHER_WORLDS_PANE);
 		if (child == null)
 			return 0;
-		Rectangle bounds = child.getAbsoluteBounds();
-		if (bounds == null)
+
+		RSInterfaceComponent[] components = child.getChildren();
+		if (components == null || components.length == 0)
 			return 0;
-		if (top) {
-			return bounds.y;
-		}
-		else {
-			return bounds.y + bounds.height;
-		}
+
+		return components[components.length - 1].getY();
 	}
 
-	/**
-	 * 
-	 * @param Rectangle
-	 *            bounds of the world
-	 * @return true if the rectangle is visible inside the world switching menu
-	 */
-	public static boolean rectangleIsVisible(Rectangle bounds) {
-		if (bounds == null)
-			return false;
-		return (bounds.y >= getWorldSwitcherMenuHeight(true)) && ((bounds.y + bounds.height) <= getWorldSwitcherMenuHeight(false));
+	private static Rectangle getWorldSwitcherPaneBounds() {
+		RSInterfaceChild worldSwitcherPane = Interfaces.get(WORLD_SWITCHER_MASTER, WORLD_SWITCHER_WORLDS_PANE);
+		if (worldSwitcherPane == null)
+			return null;
+
+		return worldSwitcherPane.getAbsoluteBounds();
 	}
 
-	public static Rectangle getBounds(int world) {
+	private static int getRelativePosition(int world) {
+		if (!isWorldSwitcherOpen())
+			return 0;
+
+		RSInterface inter = Entities.find(InterfaceEntity::new)
+				.inMasterAndChild(WORLD_SWITCHER_MASTER, WORLD_SWITCHER_WORLDS)
+				.componentNameContains(Integer.toString(formatWorld(world)))
+				.getFirstResult();
+
+		return inter == null ? 0 : inter.getY();
+	}
+
+	private static Rectangle getAbsoluteBounds(int world) {
 		if (!isWorldSwitcherOpen())
 			return null;
-		int w = formatWorld(world) - 300;
-		RSInterfaceChild child = Interfaces.get(WORLD_SWITCHER_MASTER, WORLD_SWITCHER_WORLDS);
-		if (child == null)
-			return null;
-		RSInterfaceComponent[] components = child.getChildren();
-		if (components == null || components.length == 0 || components.length % 6 != 0)
-			return null;
-		for (int i = 0; i < components.length; i += 6) {
-			RSInterfaceComponent a = components[i + 2];
-			if (a != null) {
-				String number = a.getText();
-				if (number != null && number.length() > 0 && Integer.parseInt(number) == w) {
-					RSInterfaceComponent b = components[i];
-					if (b != null)
-						return b.getAbsoluteBounds();
-				}
-			}
-		}
-		return null;
+
+		RSInterface inter = Entities.find(InterfaceEntity::new)
+				.inMasterAndChild(WORLD_SWITCHER_MASTER, WORLD_SWITCHER_WORLDS)
+				.componentNameContains(Integer.toString(formatWorld(world)))
+				.getFirstResult();
+
+		return inter == null ? null : inter.getAbsoluteBounds();
+	}
+
+	private static boolean isWorldVisible(int world) {
+		if (!isWorldSwitcherOpen())
+			return false;
+
+		RSInterfaceChild worldsPane = Interfaces.get(WORLD_SWITCHER_MASTER, WORLD_SWITCHER_WORLDS_PANE);
+		if (worldsPane == null)
+			return false;
+
+		Rectangle worldsPaneBounds = worldsPane.getAbsoluteBounds();
+		if (worldsPaneBounds == null)
+			return false;
+
+		Rectangle worldBounds = getAbsoluteBounds(world);
+		if (worldBounds == null)
+			return false;
+
+		return worldsPaneBounds.contains(worldBounds);
 	}
 
 	/**
-	 * 
-	 * @param The
-	 *            rectangle bounds of the world you are checking
-	 * @return the distance that the bounds are from the visible world switching
-	 *         menu
-	 */
-	private static int getBoundsDistanceToScreen(Rectangle bounds) {
-		final int WORLD_SWITCHER_TOP_HEIGHT = getWorldSwitcherMenuHeight(true);
-		final int WORLD_SWITCHER_BOTTOM_HEIGHT = getWorldSwitcherMenuHeight(false);
-		if (bounds.y <= WORLD_SWITCHER_TOP_HEIGHT)
-			return bounds.y - WORLD_SWITCHER_TOP_HEIGHT;
-		if ((bounds.y + bounds.height) >= WORLD_SWITCHER_BOTTOM_HEIGHT)
-			return (bounds.y + bounds.height) - WORLD_SWITCHER_BOTTOM_HEIGHT;
-		return 0;
-	}
-
-	/**
-	 * 
 	 * @return true if the world switcher is open
 	 */
 	public static boolean isWorldSwitcherOpen() {
-		RSInterfaceChild child = Interfaces.get(WORLD_SWITCHER_MASTER, 0);
-		return child != null && !child.isHidden(true);
-	}
+		if (!Interfaces.isInterfaceSubstantiated(WORLD_SWITCHER_MASTER))
+			return false;
 
-	/**
-	 * 
-	 * @return true if the logout menu is open
-	 */
-	public static boolean isLogoutMenuOpen() {
-		return GameTab.getOpen() == TABS.LOGOUT;
+		RSInterface child = Interfaces.get(WORLD_SWITCHER_MASTER, WORLD_SWITCHER_WORLDS);
+		if (child == null || child.isHidden())
+			return false;
+
+		return Condition.wait(() -> {
+			RSInterface[] components = child.getChildren();
+			return components != null && components.length > 0;
+		});
 	}
 
 	/**
@@ -533,18 +575,20 @@ public class WorldHopper {
 	 */
 	private static Rectangle getLogoutBounds() {
 		if (WorldHopper.isWorldSwitcherOpen()) {
-			RSInterfaceChild child = Interfaces.get(WORLD_SWITCHER_MASTER, WORLD_SWITCHER_LOGOUT_BUTTON);
-			if (child == null || child.isHidden())
-				return null;
-			Rectangle bounds = child.getAbsoluteBounds();
-			return bounds;
+			RSInterface inter = Entities.find(InterfaceEntity::new)
+					.inMaster(WORLD_SWITCHER_MASTER)
+					.isSubstantiated()
+					.actionEquals("Logout")
+					.getFirstResult();
+			return inter == null ? null : inter.getAbsoluteBounds();
 		}
 		else {
-			RSInterfaceChild child = Interfaces.get(LOGOUT_MENU_MASTER, LOGOUT_MENU_LOGOUT_BUTTON);
-			if (child == null || child.isHidden())
-				return null;
-			Rectangle bounds = child.getAbsoluteBounds();
-			return bounds;
+			RSInterface inter = Entities.find(InterfaceEntity::new)
+					.inMaster(LOGOUT_MENU_MASTER)
+					.isSubstantiated()
+					.textEquals("Click here to logout")
+					.getFirstResult();
+			return inter == null ? null : inter.getAbsoluteBounds();
 		}
 	}
 
@@ -556,25 +600,32 @@ public class WorldHopper {
 	public static boolean hoverOverLogout() {
 		if (Login.getLoginState() != Login.STATE.INGAME)
 			return false;
-		if (open(TABS.LOGOUT)) {
+
+		if (GameTab.open(TABS.LOGOUT)) {
 			Rectangle bounds = WorldHopper.getLogoutBounds();
 			if (bounds == null)
 				return false;
+
 			if (bounds.contains(Mouse.getPos()))
 				return true;
+
 			Mouse.moveBox(bounds);
-			return true;
+
+			return Condition.wait(() -> bounds.contains(Mouse.getPos()));
 		}
+
 		return false;
 	}
 
 	public static boolean logout() {
 		if (Login.getLoginState() == Login.STATE.LOGINSCREEN)
 			return true;
-		if (open(TABS.LOGOUT)) {
+
+		if (GameTab.open(TABS.LOGOUT)) {
 			Rectangle bounds = WorldHopper.getLogoutBounds();
 			if (bounds == null)
 				return false;
+
 			if (bounds.contains(Mouse.getPos())) {
 				Mouse.click(1);
 			}
@@ -582,21 +633,8 @@ public class WorldHopper {
 				Mouse.clickBox(bounds, 1);
 			}
 		}
+
 		return Login.getLoginState() == Login.STATE.LOGINSCREEN;
-	}
-
-	private static boolean open(GameTab.TABS tab) {
-		if (GameTab.getOpen() == tab)
-			return true;
-		if (GameTab.open(tab)) {
-			Timing.waitCondition(new Condition() {
-
-				public boolean active() {
-					return GameTab.getOpen() == tab;
-				}
-			}, 1000);
-		}
-		return GameTab.getOpen() == tab;
 	}
 
 	/**
@@ -606,20 +644,19 @@ public class WorldHopper {
 	public static boolean openWorldSwitcher() {
 		if (isWorldSwitcherOpen())
 			return true;
-		if (open(TABS.LOGOUT)) {
-			RSInterfaceChild child = Interfaces.get(LOGOUT_MENU_MASTER, LOGOUT_MENU_WORLD_SWITCHER_BUTTON);
-			if (child == null || child.isHidden())
-				return false;
-			if (child.click()) {
-				Timing.waitCondition(new Condition() {
 
-					public boolean active() {
-						General.sleep(100);
-						return isWorldSwitcherOpen();
-					}
-				}, 5000);
-			}
+		if (GameTab.open(TABS.LOGOUT)) {
+			RSInterface inter = Entities.find(InterfaceEntity::new)
+					.inMaster(LOGOUT_MENU_MASTER)
+					.actionEquals("World Switcher")
+					.getFirstResult();
+			if (inter == null)
+				return false;
+
+			if (inter.click())
+				return Condition.wait(() -> isWorldSwitcherOpen());
 		}
+
 		return isWorldSwitcherOpen();
 	}
 
@@ -630,18 +667,17 @@ public class WorldHopper {
 	public static boolean closeWorldSwitcher() {
 		if (!isWorldSwitcherOpen())
 			return true;
-		RSInterfaceChild close = Interfaces.get(WORLD_SWITCHER_MASTER, WORLD_SWITCHER_CLOSE_BUTTON);
-		if (close == null)
-			return false;
-		if (close.click()) {
-			Timing.waitCondition(new Condition() {
 
-				public boolean active() {
-					General.sleep(100);
-					return !Interfaces.isInterfaceValid(WORLD_SWITCHER_MASTER);
-				}
-			}, 2000);
-		}
+		RSInterface inter = Entities.find(InterfaceEntity::new)
+				.inMaster(WORLD_SWITCHER_MASTER)
+				.actionEquals("Close")
+				.getFirstResult();
+		if (inter == null)
+			return false;
+
+		if (inter.click())
+			return Condition.wait(() -> !isWorldSwitcherOpen());
+
 		return !isWorldSwitcherOpen();
 	}
 
@@ -658,6 +694,32 @@ public class WorldHopper {
 		return false;
 	}
 
+	public static boolean isWorldSwitcherWarningUp() {
+		return Entities.find(InterfaceEntity::new)
+				.inMaster(WORLD_SWITCHER_WARNING_DIALOG)
+				.textMatches("World \\d+ is a .* world!", "Switch to World .*")
+				.getFirstResult() != null;
+	}
+
+	private static boolean waitForChangeWorld(int world, RSItem[] inventory) {
+		Condition.wait(() -> getCurrentWorld() == world || Game.getSetting(18) == 0, () -> {
+			if (Player.getRSPlayer()
+					.isInCombat() || isWorldSwitcherWarningUp())
+				return Status.INTERRUPT;
+			return Status.CONTINUE;
+		});
+		if (Condition.wait(() -> Login.getLoginState() == STATE.INGAME && getCurrentWorld() == world && Game.getSetting(18) == 1 && inventory.length == Inventory.getAll().length, () -> {
+			if (Player.getRSPlayer()
+					.isInCombat() || isWorldSwitcherWarningUp())
+				return Status.INTERRUPT;
+			return Status.CONTINUE;
+		})) {
+			General.sleep(1000);
+			return true;
+		}
+		return false;
+	}
+
 	/**
 	 * selects the desired world using the in-game world switcher or logout menu
 	 * depending on the game state
@@ -667,126 +729,53 @@ public class WorldHopper {
 	 */
 	public static boolean selectWorld(int world) {
 		if (Login.getLoginState() == Login.STATE.INGAME) {
-			if (!Interfaces.isInterfaceValid(WORLD_SWITCHER_WARNING_DIALOG)) {
-				Rectangle bounds = getBounds(world);
-				if (bounds == null)
-					return false;
-				int count = Inventory.getAll().length;
-				Mouse.clickBox(bounds, 1);
-				Timing.waitCondition(new Condition() {
+			General.sleep(General.randomSD(500, 100));
+			Rectangle bounds = getAbsoluteBounds(world);
+			if (bounds == null)
+				return false;
 
-					public boolean active() {
-						General.sleep(50);
-						return Player.getRSPlayer().isInCombat() || Interfaces.isInterfaceValid(WORLD_SWITCHER_WARNING_DIALOG) ||
-								Game.getSetting(18) == 0;
+			RSItem[] inventory = Inventory.getAll();
+			Mouse.clickBox(bounds, 1);
+			Condition.wait(1000, () -> NPCChat.isContinueChatUp() || isWorldSwitcherWarningUp());
+			if (NPCChat.isContinueChatUp() || isWorldSwitcherWarningUp()) {
+				if (NPCChat.isContinueChatUp()) {
+					NPCChat.selectContinue();
+				}
+				if (isWorldSwitcherWarningUp()) {
+					if (NPCChat.selectOption("Yes. In future, only warn about dangerous worlds") || NPCChat.selectOption("Switch to the .*")) {
+						if (onWorld(WorldActivity.DEADMAN))
+							Condition.wait(10000,
+									() -> !Player.getRSPlayer()
+											.isInCombat());
+						return waitForChangeWorld(world, inventory);
 					}
-				}, 3000);
-				Timing.waitCondition(new Condition() {
-
-					public boolean active() {
-						General.sleep(50);
-						return Player.getRSPlayer().isInCombat() || Interfaces.isInterfaceValid(WORLD_SWITCHER_WARNING_DIALOG) ||
-								(getCurrentWorld() == world && Game.getSetting(18) == 1 && count == Inventory.getAll().length);
-					}
-				}, 3000);
+				}
 			}
-			if (Interfaces.isInterfaceValid(WORLD_SWITCHER_WARNING_DIALOG)) {
-				RSInterfaceChild child = Interfaces.get(WORLD_SWITCHER_WARNING_DIALOG, 0);
-				if (child == null)
-					return false;
-				RSInterfaceComponent component = child.getChild(WORLD_SWITCHER_WARNING_DIALOG_CONFIRM);
-				if (component == null)
-					return false;
-				String text = component.getText();
-				if (text == null)
-					return false;
-				if (text.contains("Yes. In future, only warn about dangerous worlds.")) {
-					Keyboard.typeSend("2");
-				}
-				else {
-					Keyboard.typeSend("1");
-				}
-				General.sleep(General.randomSD(0, 500, 75, 25));
-				Timing.waitCondition(new Condition() {
-
-					public boolean active() {
-						General.sleep(100);
-						return Player.getRSPlayer().isInCombat() || getCurrentWorld() == world;
-					}
-				}, 3000);
+			else {
+				return waitForChangeWorld(world, inventory);
 			}
 		}
 		else {
 			if (Login.getLoginState() != Login.STATE.LOGINSCREEN)
 				return false;
+
 			if (!isSelectWorldIsUp()) {
 				Mouse.clickBox(CLICK_TO_SWITCH, 1);
-				Timing.waitCondition(new Condition() {
-
-					public boolean active() {
-						General.sleep(100);
-						return isSelectWorldIsUp();
-					}
-				}, 3000);
+				Condition.wait(() -> isSelectWorldIsUp());
 			}
+
 			if (isSelectWorldIsUp()) {
 				if (worldListSorted()) {
 					Rectangle bounds = getLoginScreenWorldBounds(world);
 					if (bounds == null)
 						return false;
+
 					Mouse.clickBox(bounds, 1);
-					Timing.waitCondition(new Condition() {
-
-						public boolean active() {
-							General.sleep(100);
-							return !isSelectWorldIsUp() && getCurrentWorld() == world;
-						}
-					}, 3000);
+					return Condition.wait(() -> !isSelectWorldIsUp() && getCurrentWorld() == world);
 				}
 			}
 		}
-		if (onWorld(WorldActivity.DEADMAN)) {
-			Timing.waitCondition(new Condition() {
 
-				public boolean active() {
-					General.sleep(100);
-					return NPCChat.getClickContinueInterface() != null;
-				}
-			}, 3000);
-			NPCChat.clickContinue(false);
-			Timing.waitCondition(new Condition() {
-
-				public boolean active() {
-					General.sleep(100);
-					return Interfaces.isInterfaceValid(WORLD_SWITCHER_WARNING_DIALOG);
-				}
-			}, 3000);
-			if (Interfaces.isInterfaceValid(WORLD_SWITCHER_WARNING_DIALOG)) {
-				General.sleep(General.randomSD(1000, 300));
-				RSInterfaceChild child = Interfaces.get(WORLD_SWITCHER_WARNING_DIALOG, 0);
-				if (child == null)
-					return false;
-				RSInterfaceComponent component = child.getChild(WORLD_SWITCHER_WARNING_DIALOG_CONFIRM);
-				if (component == null)
-					return false;
-				String text = component.getText();
-				if (text == null)
-					return false;
-				if (text.contains("Yes. In future, only warn about dangerous worlds.")) {
-					Keyboard.typeSend("2");
-				}
-				else {
-					Keyboard.typeSend("1");
-				}
-				Timing.waitCondition(new Condition() {
-
-					public boolean active() {
-						General.sleep(100);
-						return getCurrentWorld() == world;
-					}
-				}, 10000);
-			}
-		}
 		return getCurrentWorld() == world;
 	}
 
@@ -842,7 +831,8 @@ public class WorldHopper {
 			if (worlds.size() != buttons.size())
 				return new ArrayList<World>();
 			for (int i = 0; i < worlds.size(); i++)
-				worlds.get(i).setWorldSelectBounds(buttons.get(i));
+				worlds.get(i)
+						.setWorldSelectBounds(buttons.get(i));
 			return worlds;
 		}
 		catch (IOException e) {
@@ -855,7 +845,7 @@ public class WorldHopper {
 	 * Get the bounds of the world at the login screen by world number.
 	 * 
 	 * @param world
-	 *            number
+	 *                  number
 	 * @return Rectangle bounds of the world button
 	 */
 	private static Rectangle getLoginScreenWorldBounds(int number) {
@@ -874,17 +864,13 @@ public class WorldHopper {
 	 */
 	private static boolean worldListSorted() {
 		Point arrow = new Point(301, 8);
-		if (Screen.getColorAt(arrow).getGreen() > 50)
+		if (Screen.getColorAt(arrow)
+				.getGreen() > 50)
 			return true;
-		Mouse.click(arrow, 1);
-		Timing.waitCondition(new Condition() {
 
-			public boolean active() {
-				General.sleep(100);
-				return Screen.getColorAt(arrow).getGreen() > 50;
-			}
-		}, 3000);
-		return Screen.getColorAt(arrow).getGreen() > 50;
+		Mouse.click(arrow, 1);
+		return Condition.wait(() -> Screen.getColorAt(arrow)
+				.getGreen() > 50);
 	}
 
 	/**
@@ -898,15 +884,14 @@ public class WorldHopper {
 	 * Checks if the current world you are on is of TYPE type
 	 * 
 	 * @param TYPE
-	 *            type of world
+	 *                 type of world
 	 * @return true if it is part of that world list
 	 */
 	public static boolean onWorld(WorldActivity activity) {
 		int number = getCurrentWorld();
 		for (World world : worlds) {
-			if (world.getNumber() == number) {
+			if (world.getNumber() == number)
 				return world.getActivity() == activity;
-			}
 		}
 		return false;
 	}
@@ -921,9 +906,8 @@ public class WorldHopper {
 	public static boolean onMembersWorld() {
 		int number = getCurrentWorld();
 		for (World world : worlds) {
-			if (world.getNumber() == number) {
+			if (world.getNumber() == number)
 				return world.getType() == WorldType.MEMBERS;
-			}
 		}
 		return false;
 	}
@@ -947,14 +931,15 @@ public class WorldHopper {
 		int current = getCurrentWorld();
 		int random = current;
 		while (random == current) {
-			random = list.get(General.random(0, list.size() - 1)).getNumber();
+			random = list.get(General.random(0, list.size() - 1))
+					.getNumber();
 		}
 		return random;
 	}
 
 	/**
-	 * Gets the column that the world belongs to in the logged out world
-	 * switcher menu
+	 * Gets the column that the world belongs to in the logged out world switcher
+	 * menu
 	 * 
 	 * @param world
 	 * @return integer array[column, position] of the world
@@ -1017,13 +1002,9 @@ public class WorldHopper {
 	public static boolean isInGame() {
 		if (Game.getGameState() != 30)
 			return false;
-		Timing.waitCondition(new Condition() {
 
-			public boolean active() {
-				General.sleep(500);
-				return !Interfaces.isInterfaceValid(50);
-			}
-		}, 3000);
+		Condition.wait(() -> !Interfaces.isInterfaceValid(50));
+
 		return Game.getGameState() == 30;
 	}
 }

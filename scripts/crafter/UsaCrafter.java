@@ -23,7 +23,7 @@ import scripts.usa.api.framework.task.TaskScript;
 import scripts.usa.api2007.observers.inventory.InventoryChange;
 import scripts.usa.api2007.observers.inventory.InventoryListener;
 
-@ScriptManifest(authors = { "Usa" }, category = "Crafting", name = "USA Crafter", version = 6.0)
+@ScriptManifest(authors = { "Usa" }, category = "Crafting", name = "USA Crafter", version = 6.1)
 public class UsaCrafter extends TaskScript implements Painting, Ending, EventBlockingOverride, InventoryListener, MessageListening07 {
 
 	@Override
@@ -43,8 +43,7 @@ public class UsaCrafter extends TaskScript implements Painting, Ending, EventBlo
 				Vars.get().stopScript();
 			}
 		}
-		General.println("We are making " + Vars.get().product.getName() +
-				(Vars.get().location != null ? " at " + Vars.get().location.getName() : " in bank"));
+		General.println("We are making " + Vars.get().product.getName() + (Vars.get().location != null ? " at " + Vars.get().location.getName() : " in bank"));
 	}
 
 	@Override

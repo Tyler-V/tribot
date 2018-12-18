@@ -8,13 +8,14 @@ import scripts.crafter.data.Locations.Type;
 import scripts.crafter.data.Vars;
 import scripts.usa.api.condition.Condition;
 import scripts.usa.api.condition.Conditions;
+import scripts.usa.api.framework.task.PriorityTask;
 import scripts.usa.api.framework.task.Task;
 import scripts.usa.api2007.Banking;
 import scripts.usa.api2007.Game;
 import scripts.usa.api2007.entity.selector.Entities;
 import scripts.usa.api2007.entity.selector.prefabs.ItemEntity;
 
-public class Craft implements Task {
+public class Craft implements PriorityTask {
 
 	@Override
 	public boolean validate() {

@@ -10,8 +10,8 @@ import org.tribot.api.input.Mouse;
 import org.tribot.api.interfaces.Clickable;
 import org.tribot.api.interfaces.Clickable07;
 import org.tribot.api.interfaces.Positionable;
-import org.tribot.api.types.generic.Filter;
 import org.tribot.api2007.ChooseOption;
+import org.tribot.api2007.GroundItems;
 import org.tribot.api2007.Player;
 import org.tribot.api2007.types.RSCharacter;
 import org.tribot.api2007.types.RSGroundItem;
@@ -30,7 +30,6 @@ import scripts.usa.api.condition.Result;
 import scripts.usa.api.condition.ResultCondition;
 import scripts.usa.api.condition.Status;
 import scripts.usa.api.framework.task.ScriptVars;
-import scripts.usa.api2007.Camera;
 import scripts.usa.api2007.Game;
 import scripts.usa.api2007.Interfaces;
 import scripts.usa.api2007.Inventory;
@@ -43,7 +42,7 @@ public class Entity {
 
 	private static Positionable current = null;
 	private static Positionable next = null;
-	private static Camera camera = new Camera();
+	private static int itemCount = 0;
 
 	public static Positionable getCurrent() {
 		return current;
@@ -65,7 +64,8 @@ public class Entity {
 		return interact(action, positionableFinder, () -> {
 			if (success.isTrue())
 				return Status.SUCCESS;
-			if (Conditions.isPlayerActive().isTrue())
+			if (Conditions.isPlayerActive()
+					.isTrue())
 				return Status.RESET;
 			return Status.CONTINUE;
 		}) == Result.SUCCESS;
@@ -76,6 +76,8 @@ public class Entity {
 			current = getEntity(positionableFinder);
 			if (current == null)
 				return Result.ERROR;
+
+			Interfaces.closeAll();
 
 			ABC.sleepReactionTime(condition);
 
@@ -90,28 +92,45 @@ public class Entity {
 			if (entity == null)
 				return Result.ERROR;
 
-			if (!entity.isClickable())
-				camera.adjustTo(current);
-
-			if (!entity.isClickable())
-				Walking.travel(current, 1);
-
-			if (!entity.isClickable())
-				return Result.ERROR;
-
 			String entityName = getName(current);
 			if (entityName == null)
 				return Result.ERROR;
 
+			if (!entity.isClickable() || !current.getPosition()
+					.isOnScreen()) {
+				ScriptVars.get().status = "Turning camera to " + entityName;
+				current.adjustCameraTo();
+			}
+
+			if (!isEntityValid(positionableFinder, current))
+				return Result.ERROR;
+
+			if (!entity.isClickable() || !current.getPosition()
+					.isOnScreen()) {
+				ScriptVars.get().status = "Walking closer to " + entityName;
+				Walking.travel(current, 1);
+			}
+
+			if (!entity.isClickable() || !current.getPosition()
+					.isOnScreen() || !isEntityValid(positionableFinder, current))
+				return Result.ERROR;
+
 			ScriptVars.get().status = action + " " + entityName;
+
+			if (action.equals("Take"))
+				itemCount = getCountOfItems(current);
 
 			if (entity.click(action.contains(entityName) ? action : action + " " + entityName))
 				return sleep(positionableFinder, action, condition);
 
 			return Result.ERROR;
 		}
+		catch (Exception e) {
+			return Result.ERROR;
+		}
 		finally {
 			current = null;
+			itemCount = 0;
 			if (!isEntityValid(positionableFinder, next))
 				next = null;
 		}
@@ -121,7 +140,8 @@ public class Entity {
 		return useItemOn(itemEntity, positionableFinder, () -> {
 			if (success.isTrue())
 				return Status.SUCCESS;
-			if (Conditions.isPlayerActive().isTrue())
+			if (Conditions.isPlayerActive()
+					.isTrue())
 				return Status.RESET;
 			return Status.CONTINUE;
 		}) == Result.SUCCESS;
@@ -136,13 +156,16 @@ public class Entity {
 
 		Clickable07 entity = (Clickable07) current;
 
-		if (!entity.isClickable())
+		if (!current.getPosition()
+				.isOnScreen())
+			current.adjustCameraTo();
+
+		if (!entity.isClickable() || !current.getPosition()
+				.isOnScreen())
 			Walking.travel(current, 1);
 
-		if (!entity.isClickable())
-			camera.adjustTo(current);
-
-		if (!entity.isClickable())
+		if (!entity.isClickable() || !current.getPosition()
+				.isOnScreen())
 			return Result.ERROR;
 
 		RSItem[] items = itemEntity.getResults();
@@ -176,10 +199,11 @@ public class Entity {
 		try {
 			ABC.setTime(Time.START);
 			return ResultCondition.wait(condition, () -> {
-				if (!isEntityValid(positionableFinder, current))
+				if (!isEntityValid(positionableFinder, current) || hasPickedUpItem(current))
 					return Status.SUCCESS;
 
-				if (Player.getRSPlayer().isInCombat())
+				if (Player.getRSPlayer()
+						.isInCombat())
 					ABC.setTime(Time.COMBAT);
 
 				next = getNextEntity(positionableFinder);
@@ -198,8 +222,23 @@ public class Entity {
 		}
 		finally {
 			ABC.setTime(Time.END);
-			current = null;
 		}
+	}
+
+	private static boolean hasPickedUpItem(Positionable positionable) {
+		if (!(positionable instanceof RSGroundItem))
+			return false;
+
+		return getCountOfItems(positionable) != itemCount;
+	}
+
+	private static int getCountOfItems(Positionable positionable) {
+		if (!(positionable instanceof RSGroundItem))
+			return 0;
+
+		return GroundItems.find(item -> {
+			return item.equals((RSGroundItem) positionable);
+		}).length;
 	}
 
 	private static boolean isEntityValid(PositionableFinder<?, ?> positionableFinder, Positionable positionable) {
@@ -210,7 +249,8 @@ public class Entity {
 		if (entities.length == 0)
 			return false;
 
-		return Arrays.stream(entities).anyMatch(entity -> entity.equals(positionable));
+		return Arrays.stream(entities)
+				.anyMatch(entity -> entity.equals(positionable));
 	}
 
 	private static Positionable getEntity(PositionableFinder<?, ?> positionableFinder) {
@@ -246,7 +286,8 @@ public class Entity {
 		if (area == null)
 			return false;
 
-		return Conditions.isMouseInPolygon(area).isTrue();
+		return Conditions.isMouseInPolygon(area)
+				.isTrue();
 	}
 
 	private static boolean hover(Positionable positionable) {
@@ -259,7 +300,7 @@ public class Entity {
 		Clickable07 clickable = (Clickable07) positionable;
 
 		if (!clickable.isClickable())
-			camera.adjustTo(positionable);
+			positionable.adjustCameraTo();
 
 		clickable.hover();
 
@@ -282,12 +323,8 @@ public class Entity {
 		if (index <= 0)
 			return false;
 
-		return ChooseOption.select(new Filter<RSMenuNode>() {
-			@Override
-			public boolean accept(RSMenuNode node) {
-				return node.getAction().equalsIgnoreCase(action) && node.getData3() == index;
-			}
-		});
+		return ChooseOption.select(node -> node.getAction()
+				.equalsIgnoreCase(action) && node.getData3() == index);
 	}
 
 	private static boolean isMouseOverMenuOption(Positionable positionable, String action) {
@@ -347,7 +384,8 @@ public class Entity {
 			return null;
 
 		for (RSMenuNode node : nodes) {
-			if (node.getAction().equalsIgnoreCase(action) && node.getData3() == index)
+			if (node.getAction()
+					.equalsIgnoreCase(action) && node.getData3() == index)
 				return node;
 		}
 
@@ -381,16 +419,19 @@ public class Entity {
 	private static String getName(Positionable positionable) {
 		try {
 			if (positionable instanceof RSObject) {
-				return ((RSObject) positionable).getDefinition().getName();
+				return ((RSObject) positionable).getDefinition()
+						.getName();
 			}
 			else if (positionable instanceof RSNPC) {
-				return ((RSNPC) positionable).getDefinition().getName();
+				return ((RSNPC) positionable).getDefinition()
+						.getName();
 			}
 			else if (positionable instanceof RSPlayer) {
 				return ((RSPlayer) positionable).getName();
 			}
 			else if (positionable instanceof RSGroundItem) {
-				return ((RSGroundItem) positionable).getDefinition().getName();
+				return ((RSGroundItem) positionable).getDefinition()
+						.getName();
 			}
 			else if (positionable instanceof RSCharacter) {
 				return ((RSCharacter) positionable).getName();
@@ -405,19 +446,24 @@ public class Entity {
 	private static Polygon getEnclosedArea(Positionable positionable) {
 		try {
 			if (positionable instanceof RSObject) {
-				return ((RSObject) positionable).getModel().getEnclosedArea();
+				return ((RSObject) positionable).getModel()
+						.getEnclosedArea();
 			}
 			else if (positionable instanceof RSNPC) {
-				return ((RSNPC) positionable).getModel().getEnclosedArea();
+				return ((RSNPC) positionable).getModel()
+						.getEnclosedArea();
 			}
 			else if (positionable instanceof RSPlayer) {
-				return ((RSPlayer) positionable).getModel().getEnclosedArea();
+				return ((RSPlayer) positionable).getModel()
+						.getEnclosedArea();
 			}
 			else if (positionable instanceof RSGroundItem) {
-				return ((RSGroundItem) positionable).getModel().getEnclosedArea();
+				return ((RSGroundItem) positionable).getModel()
+						.getEnclosedArea();
 			}
 			else if (positionable instanceof RSCharacter) {
-				return ((RSCharacter) positionable).getModel().getEnclosedArea();
+				return ((RSCharacter) positionable).getModel()
+						.getEnclosedArea();
 			}
 		}
 		catch (Exception e) {

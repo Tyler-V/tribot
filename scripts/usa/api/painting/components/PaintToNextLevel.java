@@ -26,8 +26,7 @@ public class PaintToNextLevel implements Paintable {
 	private final Color backgroundColor;
 	private final Color borderColor;
 
-	public PaintToNextLevel(SkillsTracker skillsTracker, SKILLS skill, Rectangle bounds, Color progressColor, Color backgroundColor,
-			Color borderColor) {
+	public PaintToNextLevel(SkillsTracker skillsTracker, SKILLS skill, Rectangle bounds, Color progressColor, Color backgroundColor, Color borderColor) {
 		this.skillsTracker = skillsTracker;
 		this.skill = skill;
 		this.bounds = bounds;
@@ -48,17 +47,29 @@ public class PaintToNextLevel implements Paintable {
 		this(skillsTracker, skill, bounds, GREEN, RED, Painter.Colors.BORDER_COLOR);
 	}
 
-	private String getString() {
-		return SkillsTracker.getXPToNextLevel(skill) + " XP to " +
-				SkillsTracker.getNextLevel(skill) +
-				" " +
-				Strings.toProperCase(skill.toString() + " (" + Timing.msToString(skillsTracker.getTimeToNextLevel(skill)) + ")");
+	public PaintToNextLevel(SkillsTracker skillsTracker, Rectangle bounds, Color progressColor, Color borderColor) {
+		this(skillsTracker, null, bounds, progressColor, RED, borderColor);
+	}
+
+	public PaintToNextLevel(SkillsTracker skillsTracker, Rectangle bounds, Color borderColor) {
+		this(skillsTracker, null, bounds, GREEN, RED, borderColor);
+	}
+
+	public PaintToNextLevel(SkillsTracker skillsTracker, Rectangle bounds) {
+		this(skillsTracker, null, bounds, GREEN, RED, Painter.Colors.BORDER_COLOR);
+	}
+
+	private String getString(SKILLS skill) {
+		return SkillsTracker.getXPToNextLevelString(skill) + " XP to " + SkillsTracker.getNextLevel(skill) + " " + Strings.toProperCase(skill.toString() + " (" + Timing.msToString(skillsTracker.getTimeToNextLevel(skill)) + ")");
 	}
 
 	@Override
 	public void paint(Graphics2D g2) {
 		try {
-			String text = getString();
+			SKILLS skill = this.skill != null ? this.skill : skillsTracker.getSkillBeingTrained();
+			if (skill == null)
+				return;
+			String text = getString(skill);
 			g2.setColor(backgroundColor);
 			g2.fillRoundRect(bounds.x, bounds.y, bounds.width, bounds.height, Painter.ARC, Painter.ARC);
 			g2.setColor(progressColor);

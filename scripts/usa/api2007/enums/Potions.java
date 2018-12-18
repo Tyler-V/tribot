@@ -19,35 +19,45 @@ import scripts.usa.api2007.entity.selector.prefabs.ItemEntity;
 public enum Potions {
 
 	COMBAT_POTION(
-			Filters.Items.nameContains("Combat potion").and(Filters.Items.nameContains("(")),
-			() -> Skills.getCurrentLevel(SKILLS.STRENGTH) != Skills.getActualLevel(SKILLS.STRENGTH)),
+			Filters.Items.nameContains("Combat potion")
+					.and(Filters.Items.nameContains("(")),
+			() -> Skills.getCurrentLevel(SKILLS.STRENGTH) > Skills.getActualLevel(SKILLS.STRENGTH)),
 
 	SUPER_ATTACK(
-			Filters.Items.nameContains("Super attack").and(Filters.Items.nameContains("(")),
-			() -> Skills.getCurrentLevel(SKILLS.STRENGTH) != Skills.getActualLevel(SKILLS.STRENGTH)),
+			Filters.Items.nameContains("Super attack")
+					.and(Filters.Items.nameContains("(")),
+			() -> Skills.getCurrentLevel(SKILLS.STRENGTH) > Skills.getActualLevel(SKILLS.STRENGTH)),
 
 	SUPER_STRENGTH(
-			Filters.Items.nameContains("Super strength").and(Filters.Items.nameContains("(")),
-			() -> Skills.getCurrentLevel(SKILLS.STRENGTH) != Skills.getActualLevel(SKILLS.STRENGTH)),
+			Filters.Items.nameContains("Super strength")
+					.and(Filters.Items.nameContains("(")),
+			() -> Skills.getCurrentLevel(SKILLS.STRENGTH) > Skills.getActualLevel(SKILLS.STRENGTH)),
 
-	ANTIFIRE(Filters.Items.nameContains("Antifire").and(Filters.Items.nameContains("(")), 360000),
+	RANGING_POTION(
+			Filters.Items.nameContains("Ranging potion")
+					.and(Filters.Items.nameContains("(")),
+			() -> Skills.getCurrentLevel(SKILLS.RANGED) > Skills.getActualLevel(SKILLS.RANGED));
 
-	EXTENDED_ANTIFIRE(Filters.Items.nameContains("Extended antifire").and(Filters.Items.nameContains("(")), 720000);
+	// ANTIFIRE(Filters.Items.nameContains("Antifire").and(Filters.Items.nameContains("(")),
+	// 360000),
+	//
+	// EXTENDED_ANTIFIRE(Filters.Items.nameContains("Extended
+	// antifire").and(Filters.Items.nameContains("(")), 720000);
 
 	private final Predicate<RSItem> predicate;
 	private Effect effect;
-	private static Timer timer;
-	private long time;
+	// private static Timer timer;
+	// private long time;
 
 	Potions(Predicate<RSItem> predicate, Effect effect) {
 		this.predicate = predicate;
 		this.effect = effect;
 	}
 
-	Potions(Predicate<RSItem> predicate, long time) {
-		this(predicate, () -> timer.isRunning());
-		this.time = time;
-	}
+	// Potions(Predicate<RSItem> predicate, long time) {
+	// this(predicate, () -> timer.isRunning());
+	// this.time = time;
+	// }
 
 	public String getName() {
 		return Strings.toSentenceCase(this.name());
@@ -61,15 +71,17 @@ public enum Potions {
 		return this.effect.isActive();
 	}
 
-	private boolean isTimed() {
-		return this.time > 0;
-	}
+	// private boolean isTimed() {
+	// return this.time > 0;
+	// }
 
 	public boolean drink() {
 		if (this.isActive())
 			return true;
 
-		RSItem item = Entities.find(ItemEntity::new).nameContains(this.getName()).getFirstResult();
+		RSItem item = Entities.find(ItemEntity::new)
+				.nameContains(this.getName())
+				.getFirstResult();
 		if (item == null)
 			return false;
 
@@ -78,8 +90,8 @@ public enum Potions {
 		if (Inventory.open()) {
 			ScriptVars.get().status = "Drinking " + this.getName();
 			if (item.click()) {
-				if (this.isTimed())
-					timer = new Timer(this.time);
+				// if (this.isTimed())
+				// timer = new Timer(this.time);
 				return Condition.wait(() -> this.isActive());
 			}
 		}

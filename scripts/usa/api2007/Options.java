@@ -15,21 +15,10 @@ public class Options extends org.tribot.api2007.Options {
 		return Condition.wait(() -> GameTab.getOpen() == GameTab.TABS.OPTIONS);
 	}
 
-	public static boolean isQuickPrayer(boolean on) {
-		return Game.isQuickPrayersOn() == on;
-	}
-
-	public static boolean setQuickPrayer(boolean on) {
-		if (isQuickPrayer(on))
+	public static boolean setRun(boolean active) {
+		if (Options.isRunEnabled() == active)
 			return true;
-		Options.setQuickPrayersEnabled(on);
-		return Condition.wait(() -> isQuickPrayer(on));
-	}
-
-	public static boolean setRun(boolean on) {
-		if (Options.isRunEnabled() == on)
-			return true;
-		Options.setRun(on);
-		return Condition.wait(() -> Options.isRunEnabled() == on);
+		Options.setRun(active);
+		return Condition.wait(() -> Options.isRunEnabled() == active);
 	}
 }

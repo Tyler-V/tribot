@@ -9,6 +9,7 @@ import scripts.usa.api.util.Strings;
 
 public enum Jewelry {
 
+	AMULET_OF_GLORY(Filters.Items.nameContains("Amulet of glory").and(Filters.Items.nameContains("("))),
 	GAMES_NECKLACE(Filters.Items.nameContains("Games necklace").and(Filters.Items.nameContains("("))),
 	RING_OF_DUELING(Filters.Items.nameContains("Ring of dueling").and(Filters.Items.nameContains("(")));
 

@@ -2,7 +2,9 @@ package scripts.usa.api.framework.task;
 
 import org.tribot.script.ScriptManifest;
 
+import scripts.usa.api.util.Timer;
 import scripts.usa.api2007.Client;
+import scripts.usa.api2007.Wilderness;
 import scripts.usa.api2007.tracking.SkillsTracker;
 
 public abstract class ScriptVars {
@@ -15,6 +17,8 @@ public abstract class ScriptVars {
 
 	public String status = "Starting...";
 	public int fail;
+	public int deaths;
+	public Timer teleblockTimer;
 
 	protected ScriptVars(TaskScript taskScript) {
 		this.taskScript = taskScript;
@@ -52,5 +56,9 @@ public abstract class ScriptVars {
 
 	public SkillsTracker getSkillsTracker() {
 		return this.skillsTracker;
+	}
+
+	public boolean isTeleblocked() {
+		return this.teleblockTimer != null ? this.teleblockTimer.isRunning() : false;
 	}
 }

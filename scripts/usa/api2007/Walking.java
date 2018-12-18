@@ -24,15 +24,15 @@ import scripts.usa.api.util.Timer;
 public class Walking extends org.tribot.api2007.Walking {
 
 	static {
-		WebWalkerServerApi.getInstance().setDaxCredentialsProvider(new DaxCredentialsProvider() {
-			@Override
-			public DaxCredentials getDaxCredentials() {
-				return new DaxCredentials("sub_DPjXXzL5DeSiPf", "PUBLIC-KEY");
-			}
-		});
+		WebWalkerServerApi.getInstance()
+				.setDaxCredentialsProvider(new DaxCredentialsProvider() {
+					@Override
+					public DaxCredentials getDaxCredentials() {
+						return new DaxCredentials("sub_DPjXXzL5DeSiPf", "PUBLIC-KEY");
+					}
+				});
 	}
 
-	private static Camera camera = new Camera();
 	private static RSTile[] PATH;
 
 	public static RSTile[] getPaintPath() {
@@ -46,11 +46,11 @@ public class Walking extends org.tribot.api2007.Walking {
 	}
 
 	public static boolean travelToBank(RunescapeBank bank) {
-		return DaxWalker.walkToBank(bank, null);
+		return DaxWalker.walkToBank(bank);
 	}
 
 	public static boolean travelToBank(WalkingCondition condition) {
-		return DaxWalker.walkToBank(null, condition);
+		return DaxWalker.walkToBank(condition);
 	}
 
 	public static boolean travelToBank(RunescapeBank bank, WalkingCondition condition) {
@@ -76,7 +76,7 @@ public class Walking extends org.tribot.api2007.Walking {
 			if (target == null)
 				return false;
 			PATH = new RSTile[] { target.getPosition() };
-			if (isTileOnMinimap(target) && PathFinding.canReach(target, false)) {
+			if (isTileOnMinimap(target) && PathFinding.canReach(target, true)) {
 				if (generateWalkingPreference(target) == WalkingPreference.SCREEN) {
 					PATH = generatePath(target);
 					return walkPath(Style.Screen, target, PATH);
@@ -98,7 +98,8 @@ public class Walking extends org.tribot.api2007.Walking {
 		RSTile tile = target.getPosition();
 		if (tile == null)
 			return WalkingPreference.MINIMAP;
-		int distance = Player.getPosition().distanceTo(target);
+		int distance = Player.getPosition()
+				.distanceTo(target);
 		if (distance == 0)
 			distance = 1;
 		double chance = 100.0 - (((double) distance) * 8.0);
@@ -128,7 +129,8 @@ public class Walking extends org.tribot.api2007.Walking {
 		Interfaces.closeAll();
 		if (target == null)
 			return false;
-		if (Player.getPosition().distanceTo(target) == 0)
+		if (Player.getPosition()
+				.distanceTo(target) == 0)
 			return true;
 		switch (style) {
 			case Minimap:
@@ -141,13 +143,15 @@ public class Walking extends org.tribot.api2007.Walking {
 				}
 				break;
 		}
-		return Player.getPosition().distanceTo(target) <= (offset > 0 ? offset : 1);
+		return Player.getPosition()
+				.distanceTo(target) <= (offset > 0 ? offset : 1);
 	}
 
 	public static boolean sleepWhileMoving(Positionable target, int offset) {
 		Timer timer = new Timer(2000);
 		while (timer.isRunning()) {
-			if (Player.getPosition().distanceTo(target) <= offset)
+			if (Player.getPosition()
+					.distanceTo(target) <= offset)
 				return true;
 			if (target instanceof RSNPC || target instanceof RSObject || target instanceof RSGroundItem) {
 				RSTile tile = target.getPosition();
@@ -158,17 +162,19 @@ public class Walking extends org.tribot.api2007.Walking {
 				timer.reset();
 			General.sleep(50);
 		}
-		return Player.getPosition().distanceTo(target) <= offset;
+		return Player.getPosition()
+				.distanceTo(target) <= offset;
 	}
 
 	public static boolean walkPath(Style style, Positionable target, RSTile[] path) {
 		if (path == null || path.length == 0)
 			return false;
-		if (Player.getPosition().distanceTo(path[path.length - 1]) == 0)
+		if (Player.getPosition()
+				.distanceTo(path[path.length - 1]) == 0)
 			return true;
 		if (style == Style.Screen) {
 			if (!path[path.length - 1].isOnScreen())
-				camera.setCamera(camera.generateAngle(80), camera.getRotationTo(path[path.length - 1]));
+				path[path.length - 1].adjustCameraTo();
 		}
 		Timer timer = new Timer(3000);
 		while (timer.isRunning()) {
@@ -189,10 +195,11 @@ public class Walking extends org.tribot.api2007.Walking {
 				if (tile.isOnScreen() && tile.isClickable())
 					return true;
 			}
-			if (Player.getPosition().distanceTo(path[path.length - 1]) <= 1) {
+			if (Player.getPosition()
+					.distanceTo(path[path.length - 1]) <= 1) {
 				return true;
 			}
-			camera.turnTo(path[path.length - 1]);
+			path[path.length - 1].adjustCameraTo();
 			General.sleep(50);
 		}
 		return true;

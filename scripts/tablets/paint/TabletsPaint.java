@@ -36,29 +36,48 @@ public class TabletsPaint extends Painter {
 	public TabletsPaint() {
 		super();
 		getPaint().add(new PaintRunescapeWidget(BACKGROUND_COLOR, Color.BLACK));
-		getPaint().add(new PaintCenteredString(() -> Vars.get().getScriptManifest().name(), new Font(Fonts.Google.COURGETTE.getName(), 0, 24),
-				new Rectangle(1, 338, 516, 38)));
-		getPaint()
-				.add(new PaintString(() -> "v" + Vars.get().getScriptManifest().version(), new Font(Fonts.Google.ROBOTO.getName(), 0, 10), 482, 366));
+		getPaint().add(new PaintCenteredString(() -> Vars.get()
+				.getScriptManifest()
+				.name(), new Font(Fonts.Google.COURGETTE.getName(), 0, 24), new Rectangle(1, 338, 516, 38)));
+		getPaint().add(new PaintString(() -> "v" + Vars.get()
+				.getScriptManifest()
+				.version(), new Font(Fonts.Google.ROBOTO.getName(), 0, 10), 482, 366));
 		getPaint().add(new PaintVisibilityButton(() -> getPaint().isVisible(), Icons.Color.LIGHT, BACKGROUND_COLOR, BORDER_COLOR));
-		getPaint().add(new PaintContainer(PaintColumns.AUTO, new Rectangle(7, 371, 506, 75), TEXT_COLOR, TEXT_BACKGROUND_COLOR, BORDER_COLOR,
-				new PaintBoxString(() -> "Time: " + Timing.msToString(Vars.get().getSkillsTracker().getElapsedTime())),
+		getPaint().add(new PaintContainer(PaintColumns.AUTO,
+				new Rectangle(7, 371, 506, 75),
+				TEXT_COLOR,
+				TEXT_BACKGROUND_COLOR,
+				BORDER_COLOR,
+				new PaintBoxString(() -> "Time: " + Timing.msToString(Vars.get()
+						.getSkillsTracker()
+						.getElapsedTime())),
 				new PaintBoxString(() -> Vars.get().status),
 				new PaintBoxString(() -> Vars.get().tablet.getName() + "s: " +
 						Vars.get().tablets +
 						" " +
-						Vars.get().getSkillsTracker().getAmountPerHourString(Vars.get().tablets)),
+						Vars.get()
+								.getSkillsTracker()
+								.getAmountPerHourString(Vars.get().tablets)),
 				new PaintBoxString(() -> "Profit: " + Strings.format(Vars.get().profit) +
 						" " +
-						Vars.get().getSkillsTracker().getAmountPerHourString(Vars.get().profit)),
+						Vars.get()
+								.getSkillsTracker()
+								.getAmountPerHourString(Vars.get().profit)),
 				new PaintBoxString(() -> "Magic Level: " + Skills.getActualLevel(SKILLS.MAGIC) +
 						" (+" +
-						Vars.get().getSkillsTracker().getLevelsGained(SKILLS.MAGIC) +
+						Vars.get()
+								.getSkillsTracker()
+								.getLevelsGained(SKILLS.MAGIC) +
 						")"),
-				new PaintBoxString(() -> "XP Gained: " + Vars.get().getSkillsTracker().getXPGained(SKILLS.MAGIC) +
+				new PaintBoxString(() -> "XP Gained: " + Vars.get()
+						.getSkillsTracker()
+						.getXPGained(SKILLS.MAGIC) +
 						" " +
-						Vars.get().getSkillsTracker().getXPPerHourString(SKILLS.MAGIC))));
-		getPaint().add(new PaintToNextLevel(Vars.get().getSkillsTracker(), SKILLS.MAGIC, new Rectangle(12, 449, 496, 20), BORDER_COLOR));
+						Vars.get()
+								.getSkillsTracker()
+								.getXPPerHourString(SKILLS.MAGIC))));
+		getPaint().add(new PaintToNextLevel(Vars.get()
+				.getSkillsTracker(), SKILLS.MAGIC, new Rectangle(12, 449, 496, 20), BORDER_COLOR));
 	}
 
 	@Override

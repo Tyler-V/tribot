@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 
+import org.tribot.api.General;
+import org.tribot.api2007.Equipment.SLOTS;
 import org.tribot.api2007.Player;
 import org.tribot.util.Util;
 
@@ -45,6 +47,10 @@ public class FxProperties {
 
 	public Properties getProperties() {
 		return this.properties;
+	}
+
+	public void put(List<Control> controls) {
+		controls.forEach(control -> put(control));
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -90,8 +96,18 @@ public class FxProperties {
 		}
 	}
 
-	private void put(Object key, Object value) {
-		this.properties.put(key, value.toString());
+	public void put(Object key, Object value) {
+		if (value != null)
+			this.properties.put(key, value.toString());
+		else
+			this.properties.remove(key);
+	}
+
+	public void put(SLOTS slot, Object value) {
+		if (value != null)
+			this.properties.put("SLOTS." + slot.toString(), value.toString());
+		else
+			this.properties.remove("SLOTS." + slot.toString());
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -132,6 +148,18 @@ public class FxProperties {
 
 	public String getProperty(String key) {
 		return (String) this.properties.get(key);
+	}
+
+	public boolean hasProperty(String key) {
+		return this.properties.containsKey(key);
+	}
+
+	public int getProperty(SLOTS slot) {
+		return Integer.parseInt((String) this.properties.get("SLOTS." + slot.toString()));
+	}
+
+	public boolean hasProperty(SLOTS slot) {
+		return this.properties.containsKey("SLOTS." + slot.toString());
 	}
 
 	public Properties loadProperties(String fileName) {

@@ -25,7 +25,8 @@ import scripts.usa.api2007.entity.selector.prefabs.NpcEntity;
 public class Servant {
 
 	public static NpcEntity getServantEntity() {
-		return Entities.find(NpcEntity::new).nameEquals(Servants.getNames());
+		return Entities.find(NpcEntity::new)
+				.nameEquals(Servants.getNames());
 	}
 
 	public static RSNPC getServant() {
@@ -34,7 +35,8 @@ public class Servant {
 
 	private static boolean hasServantArrived() {
 		RSNPC npc = Servant.getServant();
-		return npc != null && Player.getPosition().distanceTo(npc) <= 1;
+		return npc != null && Player.getPosition()
+				.distanceTo(npc) <= 1;
 	}
 
 	private static boolean servantIsMoving() {
@@ -72,7 +74,8 @@ public class Servant {
 			return true;
 
 		RSNPC npc = getServant();
-		if (npc == null || npc != null && Player.getPosition().distanceTo(npc) > 1) {
+		if (npc == null || npc != null && Player.getPosition()
+				.distanceTo(npc) > 1) {
 			callServant();
 			Condition.wait(General.randomSD(1000, 500), () -> isTalkingTo());
 		}
@@ -100,7 +103,8 @@ public class Servant {
 			return false;
 
 		String[] messages = { "You do not have" };
-		return Arrays.stream(messages).anyMatch(message::contains);
+		return Arrays.stream(messages)
+				.anyMatch(message::contains);
 	}
 
 	public static boolean request(int amount, ServantMaterials material) {
@@ -120,7 +124,7 @@ public class Servant {
 
 		NPCChat.selectContinue();
 
-		if (Interfaces.enterAmountUp()) {
+		if (Interfaces.isEnterAmountUp()) {
 			Keyboard.typeSend(amount);
 			return Condition.wait(() -> getServant() == null);
 		}
@@ -146,7 +150,9 @@ public class Servant {
 	}
 
 	public static boolean request(ServantMaterials material) {
-		Servants servant = Servants.getServant(Entities.find(NpcEntity::new).nameEquals(Servants.getNames()).getFirstResult());
+		Servants servant = Servants.getServant(Entities.find(NpcEntity::new)
+				.nameEquals(Servants.getNames())
+				.getFirstResult());
 		return request(servant != null ? servant.getCapacity() : 26, material);
 	}
 
@@ -163,6 +169,7 @@ public class Servant {
 		Matcher m = p.matcher(option);
 		if (!m.find())
 			return false;
-		return Integer.parseInt(m.group(1)) == amount && m.group(2).equals(material.getName());
+		return Integer.parseInt(m.group(1)) == amount && m.group(2)
+				.equals(material.getName());
 	}
 }

@@ -43,8 +43,7 @@ public class InterfaceEntity extends scripts.usa.api2007.entity.selector.FinderR
 	}
 
 	/**
-	 * Finds all the interfaces contained inside the specified master and
-	 * children.
+	 * Finds all the interfaces contained inside the specified master and children.
 	 * 
 	 * @param master
 	 */
@@ -55,8 +54,8 @@ public class InterfaceEntity extends scripts.usa.api2007.entity.selector.FinderR
 	}
 
 	/**
-	 * Finds all the interfaces whose text equals one of the specified texts.
-	 * Case insensitive.
+	 * Finds all the interfaces whose text equals one of the specified texts. Case
+	 * insensitive.
 	 *
 	 * @param text
 	 * @return
@@ -79,8 +78,8 @@ public class InterfaceEntity extends scripts.usa.api2007.entity.selector.FinderR
 	}
 
 	/**
-	 * Finds all the interfaces whose text do not equal any of the specified
-	 * texts. Case insensitive.
+	 * Finds all the interfaces whose text do not equal any of the specified texts.
+	 * Case insensitive.
 	 *
 	 * @param text
 	 * @return
@@ -103,8 +102,8 @@ public class InterfaceEntity extends scripts.usa.api2007.entity.selector.FinderR
 	}
 
 	/**
-	 * Finds all the interfaces whose text contain one of the specified texts.
-	 * Case insensitive.
+	 * Finds all the interfaces whose text contain one of the specified texts. Case
+	 * insensitive.
 	 *
 	 * @param text
 	 * @return
@@ -161,32 +160,40 @@ public class InterfaceEntity extends scripts.usa.api2007.entity.selector.FinderR
 	}
 
 	/**
-	 * Finds all the interfaces whose text equals one of the specified texts.
-	 * Case insensitive.
+	 * Finds all the interfaces whose text colour equals value provided.
+	 *
+	 * @param textColour
+	 * @return
+	 */
+	public InterfaceEntity textColourEquals(int textColour) {
+		filters.add((rsInterface) -> {
+			return rsInterface.getTextColour() == textColour;
+		});
+		return this;
+	}
+
+	/**
+	 * Finds all the interfaces whose text equals one of the specified texts. Case
+	 * insensitive.
 	 *
 	 * @param text
 	 * @return
 	 */
 	public InterfaceEntity textEquals(String... text) {
-
 		filters.add((rsInterface) -> {
-
 			String interfaceText = rsInterface.getText();
-
 			if (interfaceText == null)
 				return false;
 
 			List<String> searchList = Utils.stringListToLowercase(Arrays.asList(text));
-
 			return searchList.contains(interfaceText.toLowerCase());
 		});
-
 		return this;
 	}
 
 	/**
-	 * Finds all the interfaces whose text do not equal any of the specified
-	 * texts. Case insensitive.
+	 * Finds all the interfaces whose text do not equal any of the specified texts.
+	 * Case insensitive.
 	 *
 	 * @param text
 	 * @return
@@ -209,8 +216,35 @@ public class InterfaceEntity extends scripts.usa.api2007.entity.selector.FinderR
 	}
 
 	/**
-	 * Finds all the interfaces whose text contain one of the specified texts.
-	 * Case insensitive.
+	 * Finds all the interfaces whose text contain one of the specified texts. Case
+	 * insensitive.
+	 *
+	 * @param text
+	 * @return
+	 */
+	public InterfaceEntity textMatches(String... regex) {
+
+		filters.add((rsInterface) -> {
+
+			String interfaceText = rsInterface.getText();
+
+			if (interfaceText == null)
+				return false;
+
+			for (String r : regex) {
+				if (interfaceText.matches(r))
+					return true;
+			}
+
+			return false;
+		});
+
+		return this;
+	}
+
+	/**
+	 * Finds all the interfaces whose text contain one of the specified texts. Case
+	 * insensitive.
 	 *
 	 * @param text
 	 * @return
@@ -288,8 +322,8 @@ public class InterfaceEntity extends scripts.usa.api2007.entity.selector.FinderR
 	}
 
 	/**
-	 * Finds all the interfaces whose action equals one of the specified
-	 * actions. Case insensitive.
+	 * Finds all the interfaces whose action equals one of the specified actions.
+	 * Case insensitive.
 	 *
 	 * @param actions
 	 * @return
@@ -323,8 +357,8 @@ public class InterfaceEntity extends scripts.usa.api2007.entity.selector.FinderR
 	}
 
 	/**
-	 * Finds all the interfaces whose actions are not equal to any of the
-	 * specified actions. Case insensitive.
+	 * Finds all the interfaces whose actions are not equal to any of the specified
+	 * actions. Case insensitive.
 	 *
 	 * @param actions
 	 * @return
@@ -358,8 +392,8 @@ public class InterfaceEntity extends scripts.usa.api2007.entity.selector.FinderR
 	}
 
 	/**
-	 * Finds all the interfaces whose action contains one of the specified
-	 * actions. Case insensitive.
+	 * Finds all the interfaces whose action contains one of the specified actions.
+	 * Case insensitive.
 	 *
 	 * @param actions
 	 * @return
@@ -422,7 +456,8 @@ public class InterfaceEntity extends scripts.usa.api2007.entity.selector.FinderR
 
 				for (String action : actions) {
 
-					if (interfaceAction.toLowerCase().contains(action.toLowerCase()))
+					if (interfaceAction.toLowerCase()
+							.contains(action.toLowerCase()))
 						return false;
 
 				}
@@ -448,7 +483,8 @@ public class InterfaceEntity extends scripts.usa.api2007.entity.selector.FinderR
 
 			int textColour = rsInterface.getTextColour();
 
-			return Arrays.stream(colours).anyMatch(i -> i == textColour);
+			return Arrays.stream(colours)
+					.anyMatch(i -> i == textColour);
 		});
 
 		return this;
@@ -467,15 +503,15 @@ public class InterfaceEntity extends scripts.usa.api2007.entity.selector.FinderR
 
 			int textColour = rsInterface.getTextColour();
 
-			return !Arrays.stream(colours).anyMatch(i -> i == textColour);
+			return !Arrays.stream(colours)
+					.anyMatch(i -> i == textColour);
 		});
 
 		return this;
 	}
 
 	/**
-	 * Finds all the interfaces whose texture id equals any of the specified
-	 * ids.
+	 * Finds all the interfaces whose texture id equals any of the specified ids.
 	 *
 	 * @param textureIds
 	 * @return
@@ -486,15 +522,16 @@ public class InterfaceEntity extends scripts.usa.api2007.entity.selector.FinderR
 
 			int textureId = rsInterface.getTextureID();
 
-			return Arrays.stream(textureIds).anyMatch(i -> i == textureId);
+			return Arrays.stream(textureIds)
+					.anyMatch(i -> i == textureId);
 		});
 
 		return this;
 	}
 
 	/**
-	 * Finds all the interfaces whose texture id does not equal any of the
-	 * specified ids.
+	 * Finds all the interfaces whose texture id does not equal any of the specified
+	 * ids.
 	 *
 	 * @param textureIds
 	 * @return
@@ -505,7 +542,8 @@ public class InterfaceEntity extends scripts.usa.api2007.entity.selector.FinderR
 
 			int textureId = rsInterface.getTextureID();
 
-			return !Arrays.stream(textureIds).anyMatch(i -> i == textureId);
+			return !Arrays.stream(textureIds)
+					.anyMatch(i -> i == textureId);
 		});
 
 		return this;
@@ -548,8 +586,7 @@ public class InterfaceEntity extends scripts.usa.api2007.entity.selector.FinderR
 	}
 
 	/**
-	 * Finds all interfaces which are hidden.
-	 * {@link RSInterface#isHidden(boolean)}
+	 * Finds all interfaces which are hidden. {@link RSInterface#isHidden(boolean)}
 	 * 
 	 * @param recursive
 	 * @return
@@ -562,8 +599,7 @@ public class InterfaceEntity extends scripts.usa.api2007.entity.selector.FinderR
 	}
 
 	/**
-	 * Finds all interfaces which are hidden.
-	 * {@link RSInterface#isHidden(boolean)}
+	 * Finds all interfaces which are hidden. {@link RSInterface#isHidden(boolean)}
 	 * 
 	 * @param recursive
 	 * @return
@@ -710,7 +746,10 @@ public class InterfaceEntity extends scripts.usa.api2007.entity.selector.FinderR
 		Stream<RSInterface> stream;
 
 		if (filters.size() > 0) {
-			stream = payload.stream().filter(filters.stream().reduce(Predicate::and).orElse(t -> false));
+			stream = payload.stream()
+					.filter(filters.stream()
+							.reduce(Predicate::and)
+							.orElse(t -> false));
 		}
 		else {
 			stream = payload.stream();

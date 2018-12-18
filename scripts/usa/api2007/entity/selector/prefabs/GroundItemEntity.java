@@ -15,6 +15,7 @@ import org.tribot.api2007.types.RSNPC;
 import scripts.usa.api.web.items.osbuddy.OSBuddy;
 import scripts.usa.api.web.items.osbuddy.OSBuddyItem;
 import scripts.usa.api2007.entity.selector.PositionableFinder;
+import scripts.usa.api2007.looting.LootItem;
 import scripts.usa.api2007.looting.Looter;
 import scripts.usa.api2007.utils.RSItem.RSItemUtils;
 
@@ -143,12 +144,19 @@ public class GroundItemEntity extends PositionableFinder<RSGroundItem, GroundIte
 	public GroundItemEntity isValid(Looter looter) {
 		filters.add(new Filter<RSGroundItem>() {
 			public boolean accept(RSGroundItem item) {
-				if (looter.getItems().containsKey(item.getID()) && looter.getItems().get(item.getID()).isMandatory())
-					return true;
-
 				String name = RSItemUtils.getName(item);
-				if (looter.getItems().containsKey(name) && looter.getItems().get(name).isMandatory())
-					return true;
+				if (name == null)
+					return false;
+				LootItem lootItem = looter.getItems()
+						.containsKey(item.getID()) ? looter.getItems()
+								.get(item.getID()) : looter.getItems()
+										.get(name);
+				if (lootItem != null) {
+					if (lootItem.shouldLoot()) {
+						if (item.getStack() >= lootItem.getMinimumStack())
+							return true;
+					}
+				}
 
 				OSBuddyItem osbuddyItem = OSBuddy.get(item);
 				if (osbuddyItem == null)
@@ -190,7 +198,9 @@ public class GroundItemEntity extends PositionableFinder<RSGroundItem, GroundIte
 
 		if (super.shouldSort()) {
 			Comparator<RSGroundItem> comparator = super.buildComparator();
-			items = Arrays.stream(items).sorted(comparator).toArray(RSGroundItem[]::new);
+			items = Arrays.stream(items)
+					.sorted(comparator)
+					.toArray(RSGroundItem[]::new);
 		}
 
 		return items;

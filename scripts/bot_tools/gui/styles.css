@@ -1,0 +1,172 @@
+.root {
+  -fx-font-family: "Roboto Mono";
+  -fx-focus-color: #0288D1;
+  -fx-background-color: transparent;
+}
+.rounded-pane {
+  -fx-background-color: #EEEEEE;
+  -fx-border-color: #DDDDDD;
+  -fx-border-radius: 5;
+  -fx-border-insets: 5;
+  -fx-background-insets: 5;
+  -fx-background-radius: 10;
+  -fx-border-style: solid;
+  -fx-border-width: 1;
+  -fx-effect: dropshadow(three-pass-box, rgba(100, 100, 100, 0.5), 10, 0.5, 0, 0);
+}
+.rounded-title-pane {
+  -fx-background-color: #283593;
+  -fx-background-insets: 5;
+  -fx-background-radius: 5 5 0 0;
+  -fx-pref-height: 50;
+}
+.rounded-title-pane .title {
+  -fx-font-weight: bold;
+  -fx-text-fill: #FFFFFF;
+  -fx-font-size: 18px;
+  -fx-alignment: center;
+}
+.rounded-title-pane .version {
+  -fx-font-weight: bold;
+  -fx-text-fill: #FFFFFF;
+  -fx-font-size: 11px;
+  -fx-alignment: center_right;
+}
+.titled-pane .title {
+  -fx-background-color: #0288D1;
+  -fx-border-color: #DDDDDD;
+  -fx-pref-height: 37;
+  -fx-font-size: 16px;
+}
+.titled-pane .title .text {
+  -fx-fill: white;
+}
+.titled-pane .content {
+  -fx-background-color: #FFFFFF;
+  -fx-border-color: #DDDDDD;
+}
+.titled-pane > *.content {
+  -fx-padding: 15;
+}
+.titled-pane > *.content AnchorPane {
+  -fx-padding: 0;
+}
+.jfx-button {
+  -fx-background-color: #283593;
+  -fx-text-fill: #FFFFFF;
+  -fx-font-size: 14px;
+  -fx-padding: 5px;
+  -jfx-button-type: RAISED;
+  -fx-min-width: 100;
+}
+.jfx-button.secondary {
+  -fx-background-color: #0288D1;
+}
+.jfx-tab-pane {
+  -fx-background-color: #FFFFFF;
+  -fx-border-color: #DDDDDD;
+  -fx-border-style: solid;
+  -fx-border-width: 1;
+  -fx-padding: 0;
+}
+.jfx-tab-pane .tab {
+  -fx-padding: 0;
+}
+.jfx-tab-pane .tab:selected,
+.jfx-tab-pane .tab-header-area .tab-header-background {
+  -fx-background-color: #283593;
+  -fx-padding: 0;
+}
+.jfx-tab-pane .tab-label {
+  -fx-text-fill: #FFFFFF;
+  -fx-font-weight: normal;
+  -fx-font-size: 16px;
+}
+.jfx-tab-pane .tab-header-area .tab-selected-line {
+  -fx-background-color: #FFFFFF;
+}
+.jfx-tab-pane .tab-content-area {
+  -fx-padding: 15;
+}
+.jfx-tab-pane .tab-content-area .titled-pane {
+  -fx-padding: 0 15 15 0;
+}
+.jfx-tab-pane .tab-content-area .titled-pane .titled-pane {
+  -fx-padding: 0;
+}
+.jfx-tab-pane.secondary .tab:selected,
+.jfx-tab-pane.secondary .tab-header-area .tab-header-background {
+  -fx-background-color: #0288D1;
+}
+.jfx-check-box {
+  -jfx-checked-color: #0288D1;
+}
+.input-focused-line {
+  -fx-background-color: #0288D1;
+}
+.slider .thumb {
+  -fx-background-color: #0288D1;
+}
+.jfx-list-view {
+  -fx-border-color: #DDDDDD;
+  -fx-background-insets: 0;
+}
+.jfx-list-view .list-cell:even {
+  -fx-background-color: #F9F9F9;
+}
+.jfx-list-view .list-cell:odd {
+  -fx-background-color: #EDEDED;
+}
+.jfx-list-view .list-cell:empty {
+  -fx-opacity: 0;
+}
+.jfx-list-view .list-cell:filled:hover {
+  -fx-background-color: #DDDDDD;
+}
+.jfx-list-view .list-cell:filled:selected {
+  -fx-background-color: #0288D1;
+  -fx-text-fill: #FFFFFF;
+}
+.jfx-list-view .list-cell .text-field {
+  -fx-text-fill: -fx-text-inner-color;
+  -fx-highlight-fill: derive(-fx-control-inner-background, -20%);
+  -fx-highlight-text-fill: -fx-text-inner-color;
+  -fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);
+  -fx-background-color: #FFFFFF;
+  -fx-background-insets: 1;
+  -fx-background-radius: 0;
+  -fx-cursor: text;
+  -fx-padding: 0;
+  -fx-font-size: 12px;
+}
+.jfx-dialog-layout {
+  -fx-text-fill: rgba(0, 0, 0, 0.87);
+}
+.jfx-dialog-layout .jfx-layout-heading {
+  -fx-alignment: center-left;
+  -fx-font-weight: lighter;
+  -fx-font-size: 16px;
+  -fx-padding: 10;
+  -fx-background-color: #283593;
+}
+.jfx-dialog-layout .jfx-layout-heading .label {
+  -fx-text-fill: #FFFFFF;
+}
+.jfx-dialog-layout .jfx-layout-body {
+  -fx-alignment: center-left;
+  -fx-padding: 15;
+  -fx-pref-width: 400;
+}
+.jfx-dialog-layout .jfx-layout-body .label {
+  -fx-text-fill: rgba(0, 0, 0, 0.87);
+  -fx-font-size: 14px;
+  -fx-wrap-text: true;
+}
+.jfx-dialog-layout .jfx-layout-actions {
+  -fx-alignment: center-right;
+  -fx-hgap: 10;
+  -fx-padding: 10;
+}
+.jfx-dialog-layout .jfx-layout-actions .jfx-button {
+  -fx-min-width: 100;
+}

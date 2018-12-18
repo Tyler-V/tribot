@@ -23,7 +23,7 @@ import scripts.usa.api2007.observers.inventory.InventoryChange;
 import scripts.usa.api2007.observers.inventory.InventoryListener;
 import scripts.usa.api2007.utils.RSItem.RSItemUtils;
 
-@ScriptManifest(authors = { "Usa" }, category = "Money Making", name = "USA Tablets", version = 11.1)
+@ScriptManifest(authors = { "Usa" }, category = "Money Making", name = "USA Tablets", version = 11.4)
 public class UsaTablets extends TaskScript implements Painting, Ending, EventBlockingOverride, InventoryListener, MessageListening07 {
 
 	@Override
@@ -38,6 +38,10 @@ public class UsaTablets extends TaskScript implements Painting, Ending, EventBlo
 	public void onScriptStart() {
 		ABC.setAntiban(Vars.get().antiban);
 		ABC.setReactionSleeping(Vars.get().reactionSleep);
+	}
+
+	@Override
+	public void onScriptLoop() {
 	}
 
 	@Override

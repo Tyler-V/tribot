@@ -12,27 +12,28 @@ import scripts.usa.api2007.entity.selector.Entities;
 import scripts.usa.api2007.entity.selector.prefabs.InterfaceEntity;
 
 public class NPCChat extends org.tribot.api2007.NPCChat {
-	
+
 	public static boolean handleConversation(String regex) {
-		if(!isUp())
+		if (!isUp())
 			return false;
-		
-		while(isUp()) {
+
+		while (isUp()) {
 			selectContinue();
 			selectOption(regex);
 		}
-		
+
 		return true;
 	}
 
 	public static boolean isUp() {
-		return hasOptions() || getMessage() != null || getName() != null || Interfaces.enterAmountUp();
+		return hasOptions() || getMessage() != null || getName() != null || Interfaces.isEnterAmountUp();
 	}
 
 	public static boolean isOptionValid(String regex) {
 		if (!hasOptions())
 			return false;
-		return Arrays.stream(getOptions()).anyMatch(o -> o.matches(regex) || o.contains(regex));
+		return Arrays.stream(getOptions())
+				.anyMatch(o -> o.matches(regex) || o.contains(regex));
 	}
 
 	public static boolean hasOptions() {
@@ -50,12 +51,16 @@ public class NPCChat extends org.tribot.api2007.NPCChat {
 		if (!hasOptions())
 			return null;
 		String[] options = getOptions();
-		Optional<String> result = Arrays.stream(options).filter(option -> option.matches(regex)).findFirst();
+		Optional<String> result = Arrays.stream(options)
+				.filter(option -> option.matches(regex))
+				.findFirst();
 		return result.isPresent() ? result.get() : null;
 	}
 
 	public static boolean isContinueChatUp() {
-		RSInterface inter = Entities.find(InterfaceEntity::new).textEquals("Click here to continue").getFirstResult();
+		RSInterface inter = Entities.find(InterfaceEntity::new)
+				.textEquals("Click here to continue")
+				.getFirstResult();
 		return inter != null && !inter.isHidden();
 	}
 
@@ -71,10 +76,13 @@ public class NPCChat extends org.tribot.api2007.NPCChat {
 		if (!hasOptions())
 			return false;
 		String[] options = getOptions();
-		Optional<String> option = Arrays.stream(options).filter(o -> o.matches(regex) || o.contains(regex)).findAny();
+		Optional<String> option = Arrays.stream(options)
+				.filter(o -> o.matches(regex) || o.contains(regex))
+				.findAny();
 		if (!option.isPresent())
 			return false;
-		int index = Arrays.asList(options).indexOf(option.get()) + 1;
+		int index = Arrays.asList(options)
+				.indexOf(option.get()) + 1;
 		Chat chat = getChat();
 		Keyboard.typeSend("" + index);
 		return Condition.wait(() -> waitForChange(chat));

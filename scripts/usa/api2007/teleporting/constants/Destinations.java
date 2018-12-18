@@ -60,6 +60,10 @@ public enum Destinations {
 		return Strings.toProperCase(this.name());
 	}
 
+	public RSTile getTile() {
+		return this.tile;
+	}
+
 	public boolean hasArrived() {
 		if (this.tile != null)
 			return Player.getPosition().distanceTo(this.tile) < 5;

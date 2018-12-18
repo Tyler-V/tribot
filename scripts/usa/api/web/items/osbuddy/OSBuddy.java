@@ -10,7 +10,6 @@ import org.tribot.api2007.types.RSItemDefinition;
 import scripts.usa.api.timer.Timer;
 import scripts.usa.api.web.WebUtils;
 import scripts.usa.api.web.json.JsonObject;
-import scripts.usa.api2007.utils.RSItem.RSItemUtils;
 
 public class OSBuddy {
 
@@ -80,7 +79,7 @@ public class OSBuddy {
 	}
 
 	public static HashMap<Object, OSBuddyItem> getItems() {
-		System.out.println("Loading OSBuddy Exchange");
+		System.out.println("Loading OSBuddy Exchange...");
 		try {
 			HashMap<Object, OSBuddyItem> items = new HashMap<Object, OSBuddyItem>();
 
@@ -105,6 +104,7 @@ public class OSBuddy {
 			OSBuddyItem coins = new OSBuddyItem(995, "Coins", false, 1, 0, 1, 0, 1, 0, 1);
 			items.put(coins.getName(), coins);
 			items.put(coins.getId(), coins);
+			System.out.println("Loaded OSBuddy Exchange!");
 
 			return items;
 		}

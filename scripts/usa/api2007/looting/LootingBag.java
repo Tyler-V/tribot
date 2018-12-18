@@ -11,6 +11,7 @@ import org.tribot.api2007.types.RSInterfaceComponent;
 import org.tribot.api2007.types.RSItem;
 
 import scripts.usa.api.condition.Condition;
+import scripts.usa.api.framework.task.ScriptVars;
 import scripts.usa.api.util.Strings;
 import scripts.usa.api.web.items.osbuddy.OSBuddy;
 import scripts.usa.api2007.Banking;
@@ -37,7 +38,9 @@ public class LootingBag {
 	}
 
 	public static RSItem getLootingBag() {
-		return Entities.find(ItemEntity::new).nameEquals("Looting bag").getFirstResult();
+		return Entities.find(ItemEntity::new)
+				.nameEquals("Looting bag")
+				.getFirstResult();
 	}
 
 	public static boolean hasLootingBag() {
@@ -51,9 +54,15 @@ public class LootingBag {
 	public static boolean isState(BagOption bagOption) {
 		switch (bagOption) {
 			case OPEN:
-				return Entities.find(ItemEntity::new).nameEquals("Looting bag").actionsEquals("Close").getFirstResult() != null;
+				return Entities.find(ItemEntity::new)
+						.nameEquals("Looting bag")
+						.actionsEquals("Close")
+						.getFirstResult() != null;
 			case CLOSE:
-				return Entities.find(ItemEntity::new).nameEquals("Looting bag").actionsEquals("Open").getFirstResult() != null;
+				return Entities.find(ItemEntity::new)
+						.nameEquals("Looting bag")
+						.actionsEquals("Open")
+						.getFirstResult() != null;
 			case CHECK:
 				return isCheckLootingBagInterfaceOpen();
 			case VIEW:
@@ -63,12 +72,14 @@ public class LootingBag {
 	}
 
 	public static boolean select(BagOption bagOption) {
-		if (isState(bagOption))
+		if (!LootingBag.hasLootingBag() || isState(bagOption))
 			return true;
 
 		RSItem bag = getLootingBag();
 		if (bag == null)
 			return false;
+
+		ScriptVars.get().status = bagOption.getAction() + " Looting Bag";
 
 		if (bag.click(bagOption.getAction()))
 			return Condition.wait(() -> isState(bagOption));
@@ -113,8 +124,8 @@ public class LootingBag {
 			try {
 				if (c.getComponentItem() == -1)
 					break;
-				items.add(new RSItem(c.getComponentName().replace("<.?>", ""), c.getActions(), c.getIndex(), c.getComponentItem(),
-						c.getComponentStack(), RSItem.TYPE.OTHER));
+				items.add(new RSItem(c.getComponentName()
+						.replace("<.?>", ""), c.getActions(), c.getIndex(), c.getComponentItem(), c.getComponentStack(), RSItem.TYPE.OTHER));
 			}
 			catch (Exception e) {
 			}
@@ -132,7 +143,9 @@ public class LootingBag {
 			if (!Banking.isOpen())
 				return null;
 
-			return Entities.find(BankItemEntity::new).nameEquals("Looting bag").getFirstResult();
+			return Entities.find(BankItemEntity::new)
+					.nameEquals("Looting bag")
+					.getFirstResult();
 		}
 
 		public static boolean hasLootingBag() {
@@ -164,7 +177,10 @@ public class LootingBag {
 		}
 
 		private static RSInterface getDepositLootButton() {
-			RSInterface inter = Entities.find(InterfaceEntity::new).inMaster(LOOTING_BAG_BANK_MASTER).actionEquals("Deposit loot").getFirstResult();
+			RSInterface inter = Entities.find(InterfaceEntity::new)
+					.inMaster(LOOTING_BAG_BANK_MASTER)
+					.actionEquals("Deposit loot")
+					.getFirstResult();
 			return Interfaces.isInterfaceSubstantiated(inter) ? inter : null;
 		}
 
@@ -174,7 +190,8 @@ public class LootingBag {
 			if (view()) {
 				List<RSItem> items = getItems();
 				for (RSItem item : items)
-					value += item.getStack() * OSBuddy.get(item).getAveragePrice();
+					value += item.getStack() * OSBuddy.get(item)
+							.getAveragePrice();
 			}
 
 			return value;
@@ -202,7 +219,10 @@ public class LootingBag {
 		}
 
 		private static RSInterface getDismissButton() {
-			RSInterface inter = Entities.find(InterfaceEntity::new).inMaster(LOOTING_BAG_BANK_MASTER).actionEquals("Dismiss").getFirstResult();
+			RSInterface inter = Entities.find(InterfaceEntity::new)
+					.inMaster(LOOTING_BAG_BANK_MASTER)
+					.actionEquals("Dismiss")
+					.getFirstResult();
 			return Interfaces.isInterfaceSubstantiated(inter) ? inter : null;
 		}
 

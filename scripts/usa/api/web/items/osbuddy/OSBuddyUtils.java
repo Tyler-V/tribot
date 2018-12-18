@@ -13,6 +13,24 @@ import scripts.usa.api2007.utils.RSItem.RSItemUtils;
 
 public class OSBuddyUtils {
 
+	public static BufferedImage getBufferedImage(String name) {
+		OSBuddyItem osbuddyItem = OSBuddy.get(name);
+		if (osbuddyItem != null)
+			return osbuddyItem.getBufferedImage();
+
+		System.out.println("Could not find image for " + name);
+		return null;
+	}
+
+	public static BufferedImage getBufferedImage(int id) {
+		BufferedImage bufferedImage = WebUtils.getImage("http://cdn.rsbuddy.com/items/" + id + ".png");
+		if (bufferedImage != null)
+			return bufferedImage;
+
+		System.out.println("Could not find image for id " + id);
+		return null;
+	}
+
 	public static BufferedImage getBufferedImage(RSItem item) {
 		if (item == null)
 			return null;
@@ -31,9 +49,8 @@ public class OSBuddyUtils {
 
 		name = name.replaceAll("(.?)", "");
 		for (int i = 8; i >= 6; i--) {
-			General.println(name);
 			OSBuddyItem osbuddyItem = OSBuddy.get(name + "(" + i + ")");
-			if (item != null)
+			if (osbuddyItem != null)
 				return osbuddyItem.getBufferedImage();
 		}
 
@@ -43,6 +60,22 @@ public class OSBuddyUtils {
 
 	public static WritableImage getWritableImage(RSItem item) {
 		BufferedImage bufferedImage = getBufferedImage(item);
+		if (bufferedImage == null)
+			return null;
+
+		return SwingFXUtils.toFXImage(bufferedImage, null);
+	}
+
+	public static WritableImage getWritableImage(String name) {
+		BufferedImage bufferedImage = getBufferedImage(name);
+		if (bufferedImage == null)
+			return null;
+
+		return SwingFXUtils.toFXImage(bufferedImage, null);
+	}
+
+	public static WritableImage getWritableImage(int id) {
+		BufferedImage bufferedImage = getBufferedImage(id);
 		if (bufferedImage == null)
 			return null;
 

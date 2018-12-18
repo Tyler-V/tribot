@@ -1,6 +1,6 @@
 .root {
   -fx-font-family: "Roboto Mono";
-  -fx-focus-color: #3700B3;
+  -fx-focus-color: #198e33;
 }
 .rounded-pane {
   -fx-background-color: #ECEFF1;
@@ -14,7 +14,7 @@
   -fx-effect: dropshadow(three-pass-box, rgba(100, 100, 100, 0.5), 10, 0.5, 0, 0);
 }
 .rounded-title-pane {
-  -fx-background-color: #192ac4;
+  -fx-background-color: #036b1a;
   -fx-background-insets: 5;
   -fx-background-radius: 5 5 0 0;
   -fx-pref-height: 50;
@@ -42,7 +42,7 @@
   -fx-padding: 0;
 }
 .jfx-button {
-  -fx-background-color: #192ac4;
+  -fx-background-color: #036b1a;
   -fx-text-fill: #FFFFFF;
   -fx-font-size: 14px;
   -fx-padding: 5px;
@@ -61,7 +61,7 @@
 }
 .jfx-tab-pane .tab:selected,
 .jfx-tab-pane .tab-header-area .tab-header-background {
-  -fx-background-color: #192ac4;
+  -fx-background-color: #036b1a;
   -fx-padding: 0;
 }
 .jfx-tab-pane .tab-label {
@@ -78,16 +78,16 @@
   -fx-padding: 0 15 15 0;
 }
 .jfx-check-box {
-  -jfx-checked-color: #3700B3;
+  -jfx-checked-color: #198e33;
 }
 .input-focused-line {
-  -fx-background-color: #3700B3;
+  -fx-background-color: #198e33;
 }
 .jfx-slider .track,
 .jfx-slider .colored-track,
 .jfx-slider .thumb,
 .jfx-slider .animated-thumb {
-  -fx-background-color: #3700B3;
+  -fx-background-color: #198e33;
 }
 .jfx-list-view {
   -fx-border-color: #DDDDDD;
@@ -104,7 +104,7 @@
 }
 .jfx-list-view .list-cell:filled:selected,
 .jfx-list-view .list-cell:filled:hover {
-  -fx-background-color: #192ac4;
+  -fx-background-color: #036b1a;
   -fx-text-fill: #FFFFFF;
 }
 .jfx-list-view .list-cell .text-field {

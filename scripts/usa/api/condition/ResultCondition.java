@@ -3,6 +3,7 @@ package scripts.usa.api.condition;
 import org.tribot.api.General;
 
 import scripts.usa.api.antiban.ABC;
+import scripts.usa.api.framework.task.ScriptVars;
 import scripts.usa.api.util.Timer;
 
 public interface ResultCondition {
@@ -15,6 +16,8 @@ public interface ResultCondition {
 		Timer timer = new Timer(timeout);
 		while (timer.isRunning()) {
 			switch (condition.getStatus()) {
+				case ERROR:
+					return Result.ERROR;
 				case INTERRUPT:
 					return Result.INTERRUPTED;
 				case SUCCESS:
@@ -28,6 +31,8 @@ public interface ResultCondition {
 
 			if (callback != null) {
 				switch (callback.getStatus()) {
+					case ERROR:
+						return Result.ERROR;
 					case INTERRUPT:
 						return Result.INTERRUPTED;
 					case SUCCESS:
@@ -41,9 +46,9 @@ public interface ResultCondition {
 			}
 
 			if (ABC.performAntiban())
-				timer.reset();
+				ScriptVars.get().status = "Performing Antiban";
 
-			General.sleep(250);
+			General.sleep(100);
 		}
 		return Result.TIMEOUT;
 	}

@@ -11,11 +11,6 @@ import scripts.usa.api2007.Banking;
 public class Bank implements PriorityTask {
 
 	@Override
-	public int priority() {
-		return 0;
-	}
-
-	@Override
 	public boolean validate() {
 		if (!Vars.hasTools() || !Vars.hasMaterials())
 			return true;

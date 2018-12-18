@@ -12,14 +12,20 @@ import scripts.usa.api2007.entity.selector.prefabs.InterfaceEntity;
 public class Interfaces extends org.tribot.api2007.Interfaces {
 
 	public static final int OPTIONS_MASTER = 261;
+	private static final int ENTER_AMOUNT_MASTER_ID = 162;
 
-	public static boolean enterAmountUp() {
-		RSInterface inter = Entities.find(InterfaceEntity::new).textContains("Enter amount").getFirstResult();
-		return inter != null && !inter.isHidden();
+	public static boolean isEnterAmountUp() {
+		RSInterface inter = Entities.find(InterfaceEntity::new)
+				.inMaster(ENTER_AMOUNT_MASTER_ID)
+				.textEquals("*")
+				.getFirstResult();
+		return Interfaces.isInterfaceSubstantiated(inter);
 	}
 
 	private static InterfaceEntity getClosableInterfaceEntity() {
-		return Entities.find(InterfaceEntity::new).isNotHidden().actionEquals("Close");
+		return Entities.find(InterfaceEntity::new)
+				.isNotHidden()
+				.actionEquals("Close");
 	}
 
 	public static boolean isClosableInterfaceOpen() {
@@ -41,20 +47,32 @@ public class Interfaces extends org.tribot.api2007.Interfaces {
 
 		List<String> actions = Arrays.asList(inter.getActions());
 
-		int actionValue = actions.stream().map(a -> {
-			a = a.replaceAll("\\D+", "");
-			return a.isEmpty() ? 0 : Integer.parseInt(a);
-		}).filter(v -> v > 0 && v >= amount).mapToInt(v -> v).min().orElse(0);
+		int actionValue = actions.stream()
+				.map(a -> {
+					a = a.replaceAll("\\D+", "");
+					return a.isEmpty() ? 0 : Integer.parseInt(a);
+				})
+				.filter(v -> v > 0 && v >= amount)
+				.mapToInt(v -> v)
+				.min()
+				.orElse(0);
 
 		String action = null;
 		if (actionValue > 0)
-			action = actions.stream().filter(a -> {
-				a = a.replaceAll("\\D+", "");
-				return !a.isEmpty() && Integer.parseInt(a) == actionValue;
-			}).findFirst().orElse(null);
+			action = actions.stream()
+					.filter(a -> {
+						a = a.replaceAll("\\D+", "");
+						return !a.isEmpty() && Integer.parseInt(a) == actionValue;
+					})
+					.findFirst()
+					.orElse(null);
 
 		if (action == null)
-			action = actions.stream().filter(a -> a.toLowerCase().contains("all")).findFirst().orElse(null);
+			action = actions.stream()
+					.filter(a -> a.toLowerCase()
+							.contains("all"))
+					.findFirst()
+					.orElse(null);
 
 		// General.println(list);
 		// General.println(actionValue);
@@ -74,7 +92,10 @@ public class Interfaces extends org.tribot.api2007.Interfaces {
 			if (!isOpen())
 				return true;
 
-			RSInterface inter = Entities.find(InterfaceEntity::new).inMaster(POLL_BOOTH_MASTER).actionEquals("Close").getFirstResult();
+			RSInterface inter = Entities.find(InterfaceEntity::new)
+					.inMaster(POLL_BOOTH_MASTER)
+					.actionEquals("Close")
+					.getFirstResult();
 			if (inter == null)
 				return false;
 

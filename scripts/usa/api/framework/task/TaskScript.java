@@ -6,7 +6,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 import org.tribot.api.General;
-import org.tribot.api2007.Camera;
+import org.tribot.api2007.Login;
+import org.tribot.api2007.Player;
 import org.tribot.script.Script;
 import org.tribot.script.interfaces.Ending;
 import org.tribot.script.interfaces.EventBlockingOverride;
@@ -14,14 +15,17 @@ import org.tribot.script.interfaces.MessageListening07;
 import org.tribot.script.interfaces.Painting;
 
 import scripts.usa.api.antiban.ABC;
+import scripts.usa.api.condition.Condition;
 import scripts.usa.api.gui.AbstractFxController;
 import scripts.usa.api.gui.AbstractFxGUI;
 import scripts.usa.api.gui.FxApplication;
 import scripts.usa.api.painting.PaintUtils;
 import scripts.usa.api.painting.Painter;
 import scripts.usa.api.threads.SafeThread;
+import scripts.usa.api.util.Timer;
 import scripts.usa.api2007.observers.inventory.InventoryListener;
 import scripts.usa.api2007.observers.inventory.InventoryObserver;
+import scripts.usa.api2007.observers.teleblock.Teleblock;
 
 public abstract class TaskScript extends Script implements Painting, Ending, EventBlockingOverride, InventoryListener, MessageListening07 {
 
@@ -29,6 +33,7 @@ public abstract class TaskScript extends Script implements Painting, Ending, Eve
 	private FxApplication jfx;
 	private Tasks tasks = new Tasks();
 	private SafeThread inventoryObserverThread;
+	private SafeThread teleblockThread;
 
 	public abstract void init();
 
@@ -42,6 +47,13 @@ public abstract class TaskScript extends Script implements Painting, Ending, Eve
 	public void run() {
 		init();
 
+		while (Login.getLoginState() != Login.STATE.INGAME || Player.getRSPlayer() == null) {
+			ScriptVars.get().status = "Logging in...";
+			sleep(500);
+		}
+		ScriptVars.get().status = "Logged in!";
+		sleep(1000);
+
 		if (jfx != null) {
 			jfx.show();
 			while (jfx.isShowing()) {
@@ -53,36 +65,32 @@ public abstract class TaskScript extends Script implements Painting, Ending, Eve
 		ScriptVars.get().status = "Starting...";
 
 		inventoryObserverThread = new SafeThread(new InventoryObserver(this));
+		teleblockThread = new SafeThread(new Teleblock());
 
 		onScriptStart();
 
-		Camera.setCameraAngle(100);
-
-		// General.println(tasks);
-
-		Task task = getTasks().first();
-
-		while (ScriptVars.get().isRunning()) {
+		while (ScriptVars.get()
+				.isRunning()) {
 			onScriptLoop();
 
-			if (!ScriptVars.get().getSkillsTracker().isSet())
-				ScriptVars.get().getSkillsTracker().setSkills();
+			if (!ScriptVars.get()
+					.getSkillsTracker()
+					.isSet())
+				ScriptVars.get()
+						.getSkillsTracker()
+						.setSkills();
 
-			if (task.validate()) {
-				task.execute();
-				if (tasks.hasPriorityTask()) {
-					task = getTasks().first();
-				}
-				else {
-					task = getTasks().higher(task);
+			if (tasks.current()
+					.validate()) {
+				tasks.current()
+						.execute();
+				if (tasks.current() instanceof PriorityTask) {
+					tasks.reset();
 				}
 			}
 			else {
-				task = getTasks().higher(task);
+				tasks.next();
 			}
-
-			if (task == null)
-				task = getTasks().first();
 
 			if (ABC.performAntiban())
 				ScriptVars.get().status = "Performing Antiban";
@@ -105,10 +113,6 @@ public abstract class TaskScript extends Script implements Painting, Ending, Eve
 		this.painter = painter;
 	}
 
-	public Tasks getTasks() {
-		return this.tasks;
-	}
-
 	public void setTasks(Task... tasks) {
 		this.tasks = new Tasks(tasks);
 	}
@@ -116,6 +120,8 @@ public abstract class TaskScript extends Script implements Painting, Ending, Eve
 	public void onEnd() {
 		if (inventoryObserverThread != null)
 			inventoryObserverThread.stop();
+		if (teleblockThread != null)
+			teleblockThread.stop();
 		if (jfx != null)
 			jfx.close();
 		onScriptEnd();
@@ -164,6 +170,14 @@ public abstract class TaskScript extends Script implements Painting, Ending, Eve
 
 	@Override
 	public void serverMessageReceived(String message) {
+		if (message.equals("Oh dear, you are dead!"))
+			ScriptVars.get().deaths++;
+		if (message.contains("teleport block has been cast on you")) {
+			if (ScriptVars.get().teleblockTimer == null) {
+				General.println(message);
+				ScriptVars.get().teleblockTimer = new Timer(300000);
+			}
+		}
 	}
 
 	@Override

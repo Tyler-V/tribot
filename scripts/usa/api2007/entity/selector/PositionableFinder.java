@@ -1,22 +1,17 @@
 package scripts.usa.api2007.entity.selector;
 
-import java.util.Arrays;
 import java.util.Comparator;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.tribot.api.interfaces.Clickable07;
 import org.tribot.api.interfaces.Positionable;
 import org.tribot.api.types.generic.Filter;
-import org.tribot.api.util.Sorting;
 import org.tribot.api2007.Game;
+import org.tribot.api2007.PathFinding;
 import org.tribot.api2007.Player;
 import org.tribot.api2007.types.RSArea;
-import org.tribot.api2007.types.RSGroundItem;
-import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSTile;
 
 import scripts.usa.api.antiban.ABC;
-import scripts.usa.api.web.items.osbuddy.OSBuddy;
 
 /**
  * @author Laniax
@@ -24,6 +19,26 @@ import scripts.usa.api.web.items.osbuddy.OSBuddy;
 public abstract class PositionableFinder<T extends Positionable & Clickable07, S> extends Finder<T, S> {
 
 	private boolean selectABC;
+
+	/**
+	 * Generates a filter which of entities that are inside an area
+	 * 
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public S maxDistance(int distance) {
+		PositionableFinder<T, S> self = this;
+
+		filters.add(new Filter<T>() {
+			@Override
+			public boolean accept(T t) {
+				return Player.getPosition()
+						.distanceTo(t) <= distance;
+			}
+		});
+
+		return (S) this;
+	}
 
 	/**
 	 * Generates a filter which of entities that are inside an area
@@ -51,8 +66,8 @@ public abstract class PositionableFinder<T extends Positionable & Clickable07, S
 	}
 
 	/**
-	 * Generates a filter which will only return entities who are inside
-	 * buildings. ONLY WORKS IF THE ENTITY IS INSIDE THE CURRENTLY LOADED REGION
+	 * Generates a filter which will only return entities who are inside buildings.
+	 * ONLY WORKS IF THE ENTITY IS INSIDE THE CURRENTLY LOADED REGION
 	 * 
 	 * @return
 	 */
@@ -71,8 +86,8 @@ public abstract class PositionableFinder<T extends Positionable & Clickable07, S
 	}
 
 	/**
-	 * Generates a filter which will only return entities who are outside
-	 * buildings. ONLY WORKS IF THE ENTITY IS INSIDE THE CURRENTLY LOADED REGION
+	 * Generates a filter which will only return entities who are outside buildings.
+	 * ONLY WORKS IF THE ENTITY IS INSIDE THE CURRENTLY LOADED REGION
 	 * 
 	 * @return
 	 */
@@ -112,15 +127,37 @@ public abstract class PositionableFinder<T extends Positionable & Clickable07, S
 		comparators.add(new Comparator<T>() {
 			@Override
 			public int compare(Positionable a, Positionable b) {
-				int distanceA = Player.getPosition().distanceTo(a);
-				int distanceB = Player.getPosition().distanceTo(b);
-				if (distanceA < distanceB) {
-					return -1;
-				}
-				else if (distanceA > distanceB) {
-					return 1;
-				}
-				return 0;
+				int distanceA = Player.getPosition()
+						.distanceTo(a);
+				int distanceB = Player.getPosition()
+						.distanceTo(b);
+				return distanceA < distanceB ? -1 : (distanceA > distanceB ? 1 : 0);
+			}
+		});
+		return (S) this;
+	}
+
+	public S canReach(boolean isObject) {
+		PositionableFinder<T, S> self = this;
+
+		filters.add(new Filter<T>() {
+			@Override
+			public boolean accept(T t) {
+				return PathFinding.canReach(t, isObject);
+			}
+		});
+
+		return (S) this;
+	}
+
+	@SuppressWarnings("unchecked")
+	public S closestTo(RSTile tile) {
+		comparators.add(new Comparator<T>() {
+			@Override
+			public int compare(Positionable a, Positionable b) {
+				int distanceA = tile.distanceTo(a);
+				int distanceB = tile.distanceTo(b);
+				return distanceA < distanceB ? -1 : (distanceA > distanceB ? 1 : 0);
 			}
 		});
 		return (S) this;
@@ -148,9 +185,11 @@ public abstract class PositionableFinder<T extends Positionable & Clickable07, S
 			Positionable result = finder.getFirstResult();
 			if (result == null)
 				continue;
-			if (Player.getPosition().distanceTo((Positionable) result) < distance) {
+			if (Player.getPosition()
+					.distanceTo((Positionable) result) < distance) {
 				closest = finder;
-				distance = Player.getPosition().distanceTo((Positionable) result);
+				distance = Player.getPosition()
+						.distanceTo((Positionable) result);
 			}
 		}
 		return closest;

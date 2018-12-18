@@ -1,6 +1,7 @@
 package scripts.usa.api2007.tracking;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 
 import org.tribot.api2007.Login;
@@ -27,7 +28,8 @@ public class SkillsTracker {
 		if (Login.getLoginState() != Login.STATE.INGAME || Player.getRSPlayer() == null)
 			return;
 		time = System.currentTimeMillis();
-		Arrays.stream(Skills.SKILLS.values()).forEach(skill -> skillsMap.put(skill, new Skill(Skills.getXP(skill), Skills.getActualLevel(skill))));
+		Arrays.stream(Skills.SKILLS.values())
+				.forEach(skill -> skillsMap.put(skill, new Skill(Skills.getXP(skill), Skills.getActualLevel(skill))));
 	}
 
 	public long getStartTime() {
@@ -46,49 +48,93 @@ public class SkillsTracker {
 		return "(" + Strings.format((int) (count * (3600000D / getElapsedTime()))) + "/hr)";
 	}
 
+	public SKILLS getSkillBeingTrained() {
+		Comparator<SKILLS> xpGained = new Comparator<SKILLS>() {
+			@Override
+			public int compare(SKILLS a, SKILLS b) {
+				double xpPerHourA = getXPPerHour(a);
+				double xpPerHourB = getXPPerHour(b);
+				if (xpPerHourA > xpPerHourB) {
+					return -1;
+				}
+				else if (xpPerHourA < xpPerHourB) {
+					return 1;
+				}
+				else {
+					int xpToNextLevelA = Skills.getXPToNextLevel(a);
+					int xpToNextLevelB = Skills.getXPToNextLevel(b);
+					return xpToNextLevelA < xpToNextLevelB ? -1 : (xpToNextLevelA > xpToNextLevelB ? 1 : 0);
+				}
+			}
+		};
+		return skillsMap.keySet()
+				.stream()
+				.filter(skill -> getXPGained(skill) > 0)
+				.sorted(xpGained)
+				.findFirst()
+				.get();
+	}
+
 	public String getTotalXPGained() {
 		int xp = 0;
 		for (SKILLS skill : skillsMap.keySet())
-			xp += Skills.getXP(skill) - skillsMap.get(skill).getStartXP();
+			xp += Skills.getXP(skill) - skillsMap.get(skill)
+					.getStartXP();
 		return Strings.format(xp);
 	}
 
 	public String getXPPerHour() {
 		int xp = 0;
 		for (SKILLS skill : skillsMap.keySet())
-			xp += Skills.getXP(skill) - skillsMap.get(skill).getStartXP();
+			xp += Skills.getXP(skill) - skillsMap.get(skill)
+					.getStartXP();
 		return Strings.format((int) (xp * (3600000D / getElapsedTime())));
 	}
 
 	public double getXPPerHour(SKILLS skill) {
-		return (Skills.getXP(skill) - skillsMap.get(skill).getStartXP()) * (3600000D / getElapsedTime());
+		return (Skills.getXP(skill) - skillsMap.get(skill)
+				.getStartXP()) * (3600000D / getElapsedTime());
 	}
 
 	public String getXPPerHourString(SKILLS skill) {
-		return "(" + Strings.format((Skills.getXP(skill) - skillsMap.get(skill).getStartXP()) * (3600000D / getElapsedTime())) + "/hr)";
+		return "(" + Strings.format((Skills.getXP(skill) - skillsMap.get(skill)
+				.getStartXP()) * (3600000D / getElapsedTime())) + "/hr)";
 	}
 
 	public String getLevelsGained() {
 		int gained = 0;
 		for (SKILLS skill : skillsMap.keySet())
-			gained += Skills.getActualLevel(skill) - skillsMap.get(skill).getStartLevel();
+			gained += Skills.getActualLevel(skill) - skillsMap.get(skill)
+					.getStartLevel();
 		return Strings.format(gained);
 	}
 
-	public String getXPGained(SKILLS skill) {
-		return Strings.format(Skills.getXP(skill) - skillsMap.get(skill).getStartXP());
+	public int getXPGained(SKILLS skill) {
+		return Skills.getXP(skill) - skillsMap.get(skill)
+				.getStartXP();
 	}
 
-	public String getLevelsGained(SKILLS skill) {
-		return Strings.format(Skills.getActualLevel(skill) - skillsMap.get(skill).getStartLevel());
+	public String getXPGainedString(SKILLS skill) {
+		return Strings.format(getXPGained(skill));
+	}
+
+	public int getLevelsGained(SKILLS skill) {
+		return Skills.getActualLevel(skill) - skillsMap.get(skill)
+				.getStartLevel();
+	}
+
+	public String getLevelsGainedString(SKILLS skill) {
+		return Strings.format(getLevelsGained(skill));
 	}
 
 	public String getStartXP(SKILLS skill) {
-		return Strings.format(skillsMap.get(skill).getStartXP());
+		return Strings.format(skillsMap.get(skill)
+				.getStartXP());
 	}
 
 	public String getStartLevel(SKILLS skill) {
-		return Strings.format(skillsMap.get(skill).getStartLevel());
+		return Strings.format(skillsMap.get(skill)
+				.getStartLevel());
 	}
 
 	public long getTimeToNextLevel(SKILLS skill) {
@@ -99,12 +145,16 @@ public class SkillsTracker {
 		return (long) ((xpToNextLevel / xpPerHour) * 3600000);
 	}
 
-	public static String getXPToNextLevel(SKILLS skill) {
-		return Strings.format(Skills.getXPToNextLevel(skill));
+	public static int getXPToNextLevel(SKILLS skill) {
+		return Skills.getXPToNextLevel(skill);
+	}
+
+	public static String getXPToNextLevelString(SKILLS skill) {
+		return Strings.format(getXPToNextLevel(skill));
 	}
 
 	public static String getNextLevel(SKILLS skill) {
-		return Strings.format(Skills.getCurrentLevel(skill) + 1);
+		return Strings.format(Math.min(Skills.getActualLevel(skill) + 1, 99));
 	}
 
 	public class Skill {

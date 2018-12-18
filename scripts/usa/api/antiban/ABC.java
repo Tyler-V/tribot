@@ -55,15 +55,6 @@ public final class ABC {
 	}
 
 	/**
-	 * Static initializer
-	 */
-	static {
-		if (abc == null)
-			abc = getABC();
-		General.useAntiBanCompliance(true);
-	}
-
-	/**
 	 * Gets the instance of ABCUtil
 	 * 
 	 * @return ABCUtil
@@ -76,8 +67,8 @@ public final class ABC {
 	}
 
 	/**
-	 * Destroys the current instance of ABCUtil and stops all anti-ban threads.
-	 * Call this at the end of your script.
+	 * Destroys the current instance of ABCUtil and stops all anti-ban threads. Call
+	 * this at the end of your script.
 	 */
 	public static void destroy() {
 		if (abc == null)
@@ -189,13 +180,7 @@ public final class ABC {
 	public static boolean performAntiban() {
 		if (antiban != null && !antiban)
 			return false;
-		return performRotateCamera() || performXPCheck() ||
-				performPickupMouse() ||
-				performLeaveGame() ||
-				performExamineObject() ||
-				performRandomRightClick() ||
-				performRandomMouseMovement() ||
-				performTabsCheck();
+		return performRotateCamera() || performXPCheck() || performPickupMouse() || performLeaveGame() || performExamineObject() || performRandomRightClick() || performRandomMouseMovement() || performTabsCheck();
 	}
 
 	/**
@@ -412,11 +397,11 @@ public final class ABC {
 	}
 
 	/**
-	 * Gets your waiting time from the time you last performed an action to the
-	 * time that you completed the task.
+	 * Gets your waiting time from the time you last performed an action to the time
+	 * that you completed the task.
 	 * 
-	 * If the waiting time is under a second above 3 minutes, we will treat it
-	 * as invalid.
+	 * If the waiting time is under a second above 3 minutes, we will treat it as
+	 * invalid.
 	 */
 	public static int getWaitingTime() {
 		if ((startTime == 0 && actionTime == 0) || endTime == 0)
@@ -530,8 +515,8 @@ public final class ABC {
 	}
 
 	/**
-	 * Sleeps for the reaction time created by ABC properties, breaking out when
-	 * a Condition is active
+	 * Sleeps for the reaction time created by ABC properties, breaking out when a
+	 * Condition is active
 	 * 
 	 * @throws InterruptedException
 	 */
@@ -571,20 +556,19 @@ public final class ABC {
 	}
 
 	/**
-	 * Sleeps the ABC reaction time, breaking out early if a condition is
-	 * active.
+	 * Sleeps the ABC reaction time, breaking out early if a condition is active.
 	 * 
-	 * @param int
-	 *            time
+	 * @param           int
+	 *                      time
 	 * @param Condition
-	 *            condition
+	 *                      condition
 	 */
 	private static void sleep(int time, ResultCondition condition) {
 		SafeThread thread = new SafeThread(new ReactionSleep(time, condition));
 		try {
 			getABC().sleep(time);
 		}
-		catch (InterruptedException e) {
+		catch (Exception e) {
 			System.out.println("[ABC2] Reaction Sleeping Interrupted.");
 		}
 		finally {
@@ -593,8 +577,7 @@ public final class ABC {
 	}
 
 	/**
-	 * Thread to sleep for a reaction time breaking out when a condition is
-	 * valid.
+	 * Thread to sleep for a reaction time breaking out when a condition is valid.
 	 * 
 	 * (i.e. Player appears in Wilderness and it is unsafe to continue sleeping)
 	 */
@@ -642,8 +625,8 @@ public final class ABC {
 	}
 
 	/**
-	 * Generates trackers from bit flags Will return if waiting time is 0 to
-	 * avoid adding erroneous data
+	 * Generates trackers from bit flags Will return if waiting time is 0 to avoid
+	 * adding erroneous data
 	 */
 	public static void generateTrackers(int waiting, long... options) {
 		if (waiting == 0)

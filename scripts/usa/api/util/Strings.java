@@ -6,17 +6,21 @@ import java.util.Locale;
 public class Strings {
 
 	public static String format(int number) {
-		return NumberFormat.getNumberInstance(Locale.US).format(number);
+		return NumberFormat.getNumberInstance(Locale.US)
+				.format(number);
 	}
 
 	public static String format(double number) {
-		return NumberFormat.getNumberInstance(Locale.US).format((int) number);
+		return NumberFormat.getNumberInstance(Locale.US)
+				.format((int) number);
 	}
 
 	private static char getLastChar(StringBuilder sb) {
-		if (sb.toString().isEmpty())
+		if (sb.toString()
+				.isEmpty())
 			return Character.SPACE_SEPARATOR;
-		return sb.toString().charAt(sb.length() - 1);
+		return sb.toString()
+				.charAt(sb.length() - 1);
 	}
 
 	public static String toProperCase(String input) {
@@ -44,6 +48,10 @@ public class Strings {
 			}
 		}
 		return sb.toString();
+	}
+
+	public static String toLowerCase(String input) {
+		return toSentenceCase(input).toLowerCase();
 	}
 
 	public static String toEnumCase(String text) {

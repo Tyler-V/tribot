@@ -58,13 +58,15 @@ public class Conditions {
 	}
 
 	public static Condition hasPlayerMoved(final RSTile startingPosition) {
-		return () -> Player.getPosition().distanceTo(startingPosition) > 1;
+		return () -> Player.getPosition()
+				.distanceTo(startingPosition) > 1;
 	}
 
 	public static Condition isPlayerInteracting() {
 		return () -> {
 			try {
-				return Player.getRSPlayer().getInteractingIndex() != -1;
+				return Player.getRSPlayer()
+						.getInteractingIndex() != -1;
 			}
 			catch (Exception e) {
 				return false;
@@ -75,9 +77,12 @@ public class Conditions {
 	public static Condition isPlayerInteractingWith(String... names) {
 		return () -> {
 			try {
-				if (Player.getRSPlayer().getInteractingIndex() != -1) {
-					RSCharacter character = Player.getRSPlayer().getInteractingCharacter();
-					if (Arrays.stream(names).anyMatch(name -> name.equalsIgnoreCase(character.getName())))
+				if (Player.getRSPlayer()
+						.getInteractingIndex() != -1) {
+					RSCharacter character = Player.getRSPlayer()
+							.getInteractingCharacter();
+					if (Arrays.stream(names)
+							.anyMatch(name -> name.equalsIgnoreCase(character.getName())))
 						return true;
 				}
 				return false;
@@ -91,7 +96,9 @@ public class Conditions {
 	public static Condition isInteractingCharacterInCombat() {
 		return () -> {
 			try {
-				return Player.getRSPlayer().getInteractingCharacter().isInCombat();
+				return Player.getRSPlayer()
+						.getInteractingCharacter()
+						.isInCombat();
 			}
 			catch (Exception e) {
 				return false;
@@ -102,7 +109,8 @@ public class Conditions {
 	public static Condition isInCombat() {
 		return () -> {
 			try {
-				return Player.getRSPlayer().isInCombat();
+				return Player.getRSPlayer()
+						.isInCombat();
 			}
 			catch (Exception e) {
 				return false;
@@ -159,7 +167,8 @@ public class Conditions {
 	}
 
 	public static Condition isOnScreen(final Positionable positionable) {
-		return () -> positionable.getPosition().isOnScreen();
+		return () -> positionable.getPosition()
+				.isOnScreen();
 	}
 
 	public static Condition hasFoundLoot(Looter looter) {
@@ -168,8 +177,10 @@ public class Conditions {
 
 	public static Condition isCharacterDead(Positionable positionable) {
 		return () -> {
+			if (positionable == null)
+				return false;
 			RSCharacter character = (RSCharacter) positionable;
-			return character.getHealthPercent() == 0.0;
+			return character != null && character.getHealthPercent() == 0.0;
 		};
 	}
 }
